@@ -116,7 +116,7 @@ def fetch_market(code: str, day: str) -> list[dict]:
             "Referer": "http://sistemas.midagri.gob.pe/sisap/portal2/mayorista/",
         },
     )
-    with urllib.request.urlopen(request, timeout=90) as response:
+    with urllib.request.urlopen(request, timeout=20) as response:
         body = response.read().decode("utf-8", "replace")
     if "mensajeDeError" in body and "<table" not in body:
         raise RuntimeError(re.sub(r"<[^>]+>", " ", html.unescape(body)).strip())
@@ -168,6 +168,10 @@ def main() -> int:
                     break
             except Exception as exc:  # noqa: BLE001
                 last_error = str(exc)
+                # Solo retrocedemos de fecha cuando la fuente respondió que ese
+                # día no tuvo datos. Un timeout se corta de inmediato y usa caché.
+                if "No existen resultados" not in last_error:
+                    break
         else:
             errors.append(f"{name}: {last_error}")
             print(f"  {name}: FALLO ({last_error})")
