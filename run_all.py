@@ -55,6 +55,10 @@ def main() -> int:
         return 1
     if not run("verify_rule.py"):
         print("  (se continua sin verificacion de la regla)")
+    if not run("fetch_sisap.py"):
+        print("  (se continua sin precios SISAP)")
+    if not run("build_prices.py"):
+        print("  (la hoja de precios SISAP no se genero)")
     if not run("build_dashboard.py"):
         return 1
     if not run("publish_gas.py"):

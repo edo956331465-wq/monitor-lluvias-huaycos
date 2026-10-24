@@ -22,7 +22,8 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 
-from common import DATA_DIR, OUT_DIR, banner, db, get_meta
+from common import CACHE_DIR, DATA_DIR, OUT_DIR, banner, db, get_meta
+from build_prices import ALIASES, norm
 
 GEODATA_PATH = DATA_DIR / "geodata" / "waterways.json"
 
@@ -191,6 +192,10 @@ body{margin:0;background:var(--bg);color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   font-size:14px;line-height:1.5}
 .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
+.nav{display:flex;gap:8px;margin-bottom:12px}
+.nav a{padding:8px 14px;border:1px solid #d4b75b;border-radius:999px;text-decoration:none;
+  color:#4b351d;background:#fffdf8;font-weight:650}
+.nav a.active{background:var(--edo-yellow);border-color:var(--edo-yellow)}
 header.hero{
   background:linear-gradient(135deg,#15130f 0%,#2a2118 58%,#654621 100%);
   color:#fff;border-radius:14px;padding:26px 28px;margin-bottom:18px;
@@ -680,7 +685,9 @@ def render_national_map(
             f'r="{radius:.1f}" fill="{colour}" stroke="#fff" stroke-width="1.6" '
             f'vector-effect="non-scaling-stroke"><title>{html.escape(r["name"])} '
             f'({html.escape(r["dept"])}): '
-            f'{r["level"]} · {fmt(r["next24"])} mm/24 h · {fmt(r["next72"])} mm/72 h</title></circle>'
+            f'{r["level"]} · {fmt(r["next24"])} mm/24 h · {fmt(r["next72"])} mm/72 h'
+            f'{" · Productos SISAP: " + html.escape(", ".join(r.get("sisap_products", []))) if r.get("sisap_products") else ""}'
+            f'</title></circle>'
         )
 
     bar_px = 200 * scale / 111.32
@@ -1259,6 +1266,9 @@ def build_html(
 <body>
 <div class="wrap">
 
+<nav class="nav"><a class="active" href="index.html">Clima y riesgo</a>
+  <a href="precios.html">Precios SISAP</a></nav>
+
 <header class="hero">
   <h1>Monitor de lluvia y riesgo de huaicos · Costa peruana</h1>
   <p>Vigilancia de precipitación en 21 puntos de la costa y sus cuencas altas.
@@ -1531,6 +1541,21 @@ def main() -> int:
     # Fecha de Lima, no la de la maquina: en un runner UTC el dia cambiaria a las 19:00.
     today = datetime.now(ZoneInfo("America/Lima")).date()
     rows = [summarise_point(p, thr.get(p["id"]), hourly, ens.get(p["id"], []), today) for p in points]
+    sisap_path = CACHE_DIR / "sisap_latest.json"
+    sisap_records = []
+    if sisap_path.exists():
+        try:
+            sisap_records = json.loads(sisap_path.read_text(encoding="utf-8")).get("records", [])
+        except (OSError, json.JSONDecodeError):
+            pass
+    for row in rows:
+        products = set()
+        aliases = ALIASES.get(row["id"], ())
+        for record in sisap_records:
+            origin = norm(record.get("origin_province", ""))
+            if origin and any(norm(alias) in origin or origin in norm(alias) for alias in aliases):
+                products.add(record["product"])
+        row["sisap_products"] = sorted(products)[:8]
     rows.sort(key=lambda r: -r["score"])
 
     all_dates = sorted({d for r in rows for d in r["daily"]})
