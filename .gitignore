@@ -1,0 +1,16 @@
+# Archivos que no conviene versionar.
+# La caché y la base se regeneran solas en cada corrida.
+data/cache/
+data/warehouse.sqlite
+
+# Salidas que se producen en cada ejecución
+out/dashboard.html
+out/pronostico_resumen.csv
+out/dashboard_data.json
+out/dashboard_preview.png
+out/apps_script/
+out/verificacion_regla.md
+out/validacion_2017_2023.md
+
+__pycache__/
+*.pyc

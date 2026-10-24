@@ -1,0 +1,71 @@
+name: Actualizar tablero
+
+# Cada 3 horas. GitHub usa UTC; Lima es UTC-5, así que la corrida de las 09:00 UTC
+# equivale a las 04:00 en Lima. Los minutos "0" se evitan a propósito porque es la
+# hora de mayor congestión en los runners de GitHub.
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch: {}   # permite lanzarlo a mano desde la pestaña Actions
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependencias
+        run: pip install --quiet numpy
+
+      # La climatología ERA5 son 21 descargas de 30 años. Restaurar la caché
+      # baja la corrida de ~5 min a ~1 min.
+      - name: Restaurar datos
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/cache
+            data/geodata
+            data/warehouse.sqlite
+          key: datos-${{ github.run_id }}
+          restore-keys: |
+            datos-
+
+      - name: Correr pipeline
+        run: python run_all.py
+
+      - name: Preparar sitio
+        run: |
+          mkdir -p _site
+          cp out/dashboard.html _site/index.html
+          cp out/pronostico_resumen.csv _site/ 2>/dev/null || true
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Publicar artefacto
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  publicar:
+    needs: construir
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

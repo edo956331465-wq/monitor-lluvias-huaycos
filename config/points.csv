@@ -1,0 +1,22 @@
+id,name,dept,lat,lon,rol
+tumbes,Tumbes,Tumbes,-3.566,-80.451,Costa
+piura,Piura,Piura,-5.194,-80.633,Costa
+sullana,Sullana,Piura,-4.904,-80.685,Costa
+chiclayo,Chiclayo,Lambayeque,-6.771,-79.841,Costa
+trujillo,Trujillo,La Libertad,-8.112,-79.029,Costa
+chimbote,Chimbote,Ancash,-9.075,-78.578,Costa
+casma,Casma,Ancash,-9.474,-78.302,Costa
+barranca,Barranca,Lima,-10.752,-77.761,Costa
+huacho,Huacho,Lima,-11.107,-77.605,Costa
+lima,Lima,Lima,-12.046,-77.043,Costa
+chosica,Chosica,Lima,-11.940,-76.710,Costa
+canete,Canete,Lima,-13.078,-76.383,Costa
+pisco,Pisco,Ica,-13.710,-76.203,Costa
+ica,Ica,Ica,-14.068,-75.729,Costa
+camana,Camana,Arequipa,-16.624,-72.711,Costa
+mollendo,Mollendo,Arequipa,-17.028,-72.014,Costa
+ilo,Ilo,Moquegua,-17.639,-71.339,Costa
+tacna,Tacna,Tacna,-18.006,-70.246,Costa
+huancabamba,Huancabamba,Piura,-5.238,-79.450,Cuenca alta
+santa-eulalia,Santa Eulalia,Lima,-11.900,-76.660,Cuenca alta
+yauyos,Yauyos,Lima,-12.460,-75.920,Cuenca alta
