@@ -183,8 +183,8 @@ def summarise_point(point, thr_row, hourly, ens_rows, today: date) -> dict:
 # --------------------------------------------------------------------------- #
 CSS = """
 :root{
-  --bg:#eef1f5; --card:#ffffff; --text:#15202b; --muted:#64748b;
-  --line:#e3e8ee; --accent:#0b5d8a; --accent2:#0e7490;
+  --bg:#f5f1e8; --card:#fffdf8; --text:#211d18; --muted:#746a5d;
+  --line:#e7ddca; --accent:#5a3b22; --accent2:#d39b00; --edo-yellow:#f4c300;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);
@@ -192,15 +192,16 @@ body{margin:0;background:var(--bg);color:var(--text);
   font-size:14px;line-height:1.5}
 .wrap{max-width:1180px;margin:0 auto;padding:22px 20px 60px}
 header.hero{
-  background:linear-gradient(135deg,#0b3a54 0%,#0b5d8a 55%,#0e7490 100%);
+  background:linear-gradient(135deg,#15130f 0%,#2a2118 58%,#654621 100%);
   color:#fff;border-radius:14px;padding:26px 28px;margin-bottom:18px;
+  border-top:5px solid var(--edo-yellow);
   box-shadow:0 6px 22px rgba(11,58,84,.22)}
 header.hero h1{margin:0 0 6px;font-size:23px;letter-spacing:-.2px}
-header.hero p{margin:0;color:#cfe6f2;font-size:13.5px;max-width:760px}
+header.hero p{margin:0;color:#f4e9ca;font-size:13.5px;max-width:760px}
 .hero-meta{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
-.pill{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);
-  padding:4px 10px;border-radius:999px;font-size:12px;color:#eaf6fc}
-h2{font-size:15px;margin:0 0 12px;color:#0b3a54;letter-spacing:.2px;
+.pill{background:rgba(244,195,0,.14);border:1px solid rgba(244,195,0,.42);
+  padding:4px 10px;border-radius:999px;font-size:12px;color:#ffe889}
+h2{font-size:15px;margin:0 0 12px;color:#3b2a1c;letter-spacing:.2px;
   text-transform:uppercase;font-weight:700}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
   padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
@@ -212,7 +213,7 @@ h2{font-size:15px;margin:0 0 12px;color:#0b3a54;letter-spacing:.2px;
 .transect{display:flex;flex-direction:column;gap:3px}
 .trow{display:grid;grid-template-columns:186px 1fr 92px;gap:10px;align-items:center;
   padding:3px 0;border-radius:6px}
-.trow:hover{background:#f6f9fb}
+.trow:hover{background:#fbf6e9}
 .tname{font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tname span{font-weight:400;color:var(--muted);font-size:11.5px}
 .tbar{background:#f0f3f7;border-radius:5px;height:17px;position:relative;overflow:hidden}
@@ -223,9 +224,9 @@ h2{font-size:15px;margin:0 0 12px;color:#0b3a54;letter-spacing:.2px;
 table{width:100%;border-collapse:collapse;font-size:12.5px}
 th,td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
 th{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);
-  font-weight:700;background:#f8fafc;position:sticky;top:0;z-index:2}
+  font-weight:700;background:#faf5e8;position:sticky;top:0;z-index:2}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-tbody tr:hover{background:#f6f9fb}
+tbody tr:hover{background:#fbf6e9}
 .chip{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;
   font-weight:700;letter-spacing:.2px}
 .heat td.cell{text-align:center;font-size:10.5px;font-variant-numeric:tabular-nums;
@@ -233,7 +234,7 @@ tbody tr:hover{background:#f6f9fb}
 .heat th.rot{font-size:10px;text-align:center;padding:4px 2px}
 .heat .sticky-col{position:sticky;left:0;background:#fff;z-index:1}
 .scroll{overflow-x:auto;margin:0 -4px}
-.note{font-size:12.5px;color:#475569;background:#f8fafc;border-left:3px solid var(--accent2);
+.note{font-size:12.5px;color:#51483e;background:#faf5e8;border-left:3px solid var(--edo-yellow);
   padding:10px 14px;border-radius:0 8px 8px 0;margin-top:12px}
 details{margin-top:7px;border-top:1px solid var(--line);padding-top:9px}
 summary{cursor:pointer;font-weight:600;font-size:12.5px;color:var(--accent);outline:none}
@@ -243,7 +244,7 @@ code{background:#eef2f6;padding:1px 5px;border-radius:4px;font-size:11.5px}
 footer{margin-top:24px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.7}
 .maps{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:14px}
 .zmap{border:1px solid var(--line);border-radius:10px;padding:12px 12px 10px;background:#fdfefe}
-.zmap h3{font-size:13px;margin:0 0 3px;color:#0b3a54}
+.zmap h3{font-size:13px;margin:0 0 3px;color:#3b2a1c}
 .zmap .sub{font-size:11px;color:var(--muted);margin-bottom:9px;
   display:flex;align-items:center;gap:7px}
 .zmap svg{width:100%;height:auto;display:block;border-radius:7px}
@@ -260,8 +261,8 @@ details.sec>summary::-webkit-details-marker{display:none}
 details.sec>summary::before{content:"▸";color:var(--accent);font-size:13px;
   transition:transform .15s;display:inline-block}
 details.sec[open]>summary::before{transform:rotate(90deg)}
-details.sec>summary:hover{background:#f7fafc}
-.st{font-size:14px;font-weight:700;color:#0b3a54;text-transform:uppercase;letter-spacing:.3px}
+details.sec>summary:hover{background:#fbf6e9}
+.st{font-size:14px;font-weight:700;color:#3b2a1c;text-transform:uppercase;letter-spacing:.3px}
 .sh{font-size:12px;color:var(--muted)}
 .sbody{padding:0 20px 18px}
 .nota-sec{font-size:12px;color:#64748b;margin:0 0 12px}
@@ -280,7 +281,7 @@ details.sec>summary:hover{background:#f7fafc}
 .alist .sp{margin-left:auto}
 .natnota{margin-top:10px;font-size:11px;color:#64748b;line-height:1.5}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
-.pill-dark{background:#eef3f8;border:1px solid var(--line);color:#40566e;
+.pill-dark{background:#f5eedf;border:1px solid var(--line);color:#5a4937;
   padding:3px 10px;border-radius:999px;font-size:11px;font-weight:600}
 .dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:7px;
   vertical-align:-1px}
@@ -289,8 +290,8 @@ details.sec>summary:hover{background:#f7fafc}
 .nino-line{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px;margin-top:12px;
   padding-top:11px;border-top:1px dashed var(--line);font-size:12.5px;color:#3f5468}
 .nk{font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;
-  color:#0b5d8a;background:#e7f1f7;padding:2px 8px;border-radius:999px}
-.nt strong{color:#0b3a54}
+  color:#5a3b22;background:#f7e9b6;padding:2px 8px;border-radius:999px}
+.nt strong{color:#3b2a1c}
 .nesc{color:var(--muted);font-size:11.5px}
 .aleg{display:flex;flex-direction:column;gap:5px;font-size:11.5px;color:#475569}
 .aleg b{color:#1f3347;margin-left:2px}
@@ -300,10 +301,10 @@ details.sec>summary:hover{background:#f7fafc}
 .layers-lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;
   font-weight:700;color:var(--muted);margin-right:2px}
 .zoomctl{margin-left:auto;display:flex;align-items:center;gap:4px}
-.zbtn{border:1px solid var(--line);background:#fff;color:#33475b;width:28px;height:28px;
+.zbtn{border:1px solid var(--line);background:#fffdf8;color:#4c3a28;width:28px;height:28px;
   border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
   display:inline-flex;align-items:center;justify-content:center;line-height:1}
-.zbtn:hover{background:#f3f8fb;border-color:#a9c3d8}
+.zbtn:hover{background:#fff3bd;border-color:#d5ad28}
 .zbtn[data-zoom="reset"]{width:auto;padding:0 10px;font-size:11px;font-weight:600}
 .zlevel{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;
   min-width:40px;text-align:right}
@@ -314,12 +315,12 @@ details.sec>summary:hover{background:#f7fafc}
   font-weight:600;cursor:pointer;font-family:inherit;line-height:1.2;
   transition:background .15s,border-color .15s,opacity .15s}
 .tgl:hover{border-color:#a9c3d8;background:#f7fbfd}
-.tgl:focus-visible{outline:2px solid #0b5d8a;outline-offset:2px}
+.tgl:focus-visible{outline:2px solid #b88400;outline-offset:2px}
 .tgl .sw{width:9px;height:9px;flex:0 0 auto}
 .tgl .sw-cir{border-radius:50%;background:#d9a520}
 .tgl .sw-dia{transform:rotate(45deg);border-radius:1px;background:#c0392b}
-.tgl b{font-weight:700;color:#0b3a54;font-variant-numeric:tabular-nums}
-.tgl.on{background:#e8f2f8;border-color:#8fb6cf;color:#0b4a6b}
+.tgl b{font-weight:700;color:#3b2a1c;font-variant-numeric:tabular-nums}
+.tgl.on{background:#fff1af;border-color:#d5ad28;color:#4f3816}
 .tgl.off{opacity:.45;background:#fff}
 .mlegend{margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
 .ml-title{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;font-weight:700;
@@ -654,7 +655,7 @@ def render_national_map(
         labels.append(
             f'<text class="mlabel" data-fs="10.5" data-a="{anchor}" '
             f'data-w="{len(r["name"]) * 5.8:.0f}" x="{x + dx:.1f}" y="{y + 3.4:.1f}" '
-            f'font-size="10.5" font-weight="600" fill="#1f3347" stroke="#eef4fa" '
+            f'font-size="10.5" font-weight="600" fill="#3b2a1c" stroke="#fff9e8" '
             f'stroke-width="2.8" '
             f'paint-order="stroke" text-anchor="{anchor}">'
             f"{html.escape(r['name'])}</text>"
@@ -695,7 +696,7 @@ def render_national_map(
     svg = (
         f'<svg viewBox="0 0 {NAT_W} {NAT_H}" xmlns="http://www.w3.org/2000/svg" role="img" '
         f'aria-label="Mapa del Perú con los puntos de alerta">'
-        f'<rect width="{NAT_W}" height="{NAT_H}" fill="#e9f2f8" rx="10"/>'
+        f'<rect width="{NAT_W}" height="{NAT_H}" fill="#f4eddf" rx="10"/>'
         + base
         + regiones
         + vial
@@ -968,7 +969,7 @@ def _panel(zone: dict, rows: list[dict]) -> str:
             f'stroke="#fff" stroke-width="1.6"><title>{html.escape(r["name"])}: '
             f'{r["level"]} · {fmt(r["next72"])} mm/72 h</title></circle>'
             f'<text x="{x + dx:.1f}" y="{y + 3.3:.1f}" font-size="10" font-weight="600" '
-            f'fill="#1f3347" stroke="#f4f8fb" stroke-width="2.4" paint-order="stroke" '
+            f'fill="#3b2a1c" stroke="#fff9e8" stroke-width="2.4" paint-order="stroke" '
             f'text-anchor="{anchor}">{html.escape(r["name"])}</text>'
         )
 
@@ -1002,7 +1003,7 @@ def _panel(zone: dict, rows: list[dict]) -> str:
         f'{len(seen)} cauces</span> {chip(worst["level"])}</div>'
         f'<svg viewBox="0 0 {MAP_W} {MAP_H}" xmlns="http://www.w3.org/2000/svg" role="img" '
         f'aria-label="Ríos y quebradas de {html.escape(zone["label"])}">'
-        f'<rect width="{MAP_W}" height="{MAP_H}" fill="#f4f8fb" rx="7"/>'
+        f'<rect width="{MAP_W}" height="{MAP_H}" fill="#f4eddf" rx="7"/>'
         + "".join(halos)
         + "".join(strokes)
         + "".join(markers)
