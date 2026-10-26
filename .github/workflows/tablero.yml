@@ -55,6 +55,7 @@ jobs:
           cp out/dashboard.html _site/index.html
           cp out/precios.html _site/precios.html
           cp out/abastecimiento.html _site/abastecimiento.html
+          cp out/puertos.html _site/puertos.html
           cp out/pronostico_resumen.csv _site/ 2>/dev/null || true
 
       - name: Configurar GitHub Pages

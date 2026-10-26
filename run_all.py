@@ -60,12 +60,16 @@ def main() -> int:
         print("\n>>> SISAP: usando contrato Gold publicado por la arquitectura medallón")
     elif not run("fetch_sisap.py"):
         print("  (se continua sin precios SISAP)")
+    if not run("fetch_ports_marine.py"):
+        print("  (se continúa con el último contrato válido de puertos y mar)")
     if not run("build_prices.py"):
         print("  (la hoja de precios SISAP no se genero)")
     if not run("build_dashboard.py"):
         return 1
     if not run("build_supply.py"):
         print("  (la hoja de riesgo de abastecimiento no se generó)")
+    if not run("build_ports.py"):
+        print("  (la hoja de puertos y condiciones marinas no se generó)")
     if not run("publish_gas.py"):
         print("  (el paquete de Apps Script no se genero)")
     if verify:
