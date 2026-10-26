@@ -121,7 +121,7 @@ def main() -> int:
     page = f"""<!doctype html><html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Precios y procedencias · SISAP</title>
 <style>{CSS}</style></head><body><div class="wrap">
-<nav class="nav"><a href="index.html">Clima y riesgo</a><a class="active" href="precios.html">Precios SISAP</a></nav>
+<nav class="nav"><a href="index.html">Clima y riesgo</a><a class="active" href="precios.html">Precios SISAP</a><a href="abastecimiento.html">Riesgo de abastecimiento</a></nav>
 <header class="hero"><h1>Precios y procedencias · SISAP</h1><p>Productos relevantes para la operación, mercados mayoristas de Lima y zonas de origen próximas a la red climática.</p>
 <div class="meta">Fecha SISAP: {html.escape(payload.get("date", "—"))} · Descarga: {html.escape(payload.get("fetched_at", "—"))}</div></header>
 <div class="kpis"><div class="kpi"><span>Productos</span><b>{unique_products}</b></div>

@@ -1267,7 +1267,8 @@ def build_html(
 <div class="wrap">
 
 <nav class="nav"><a class="active" href="index.html">Clima y riesgo</a>
-  <a href="precios.html">Precios SISAP</a></nav>
+  <a href="precios.html">Precios SISAP</a>
+  <a href="abastecimiento.html">Riesgo de abastecimiento</a></nav>
 
 <header class="hero">
   <h1>Monitor de lluvia y riesgo de huaicos · Costa peruana</h1>
