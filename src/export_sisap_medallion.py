@@ -11,7 +11,7 @@ import argparse
 import json
 import re
 import unicodedata
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -64,8 +64,9 @@ def main() -> int:
     if not files:
         raise FileNotFoundError(f"No existen particiones Silver en {silver}")
 
-    # Para el snapshot diario basta la partición más reciente.
-    frame = pd.read_parquet(files[-1])
+    # Se leen las dos particiones más recientes para cubrir una ventana móvil
+    # de 365 días incluso cuando cruza el cambio de año.
+    frame = pd.concat([pd.read_parquet(path) for path in files[-2:]], ignore_index=True)
     frame["fecha"] = pd.to_datetime(frame["fecha"], errors="coerce")
     frame = frame[frame["fecha"].notna()].copy()
     frame["producto_filtro"] = frame["producto_norm"].map(norm)
@@ -100,9 +101,41 @@ def main() -> int:
             "date": row["fecha"].strftime("%d/%m/%Y"),
         })
 
+    # Red histórica producto-procedencia. Evita perder un origen conocido solo
+    # porque no registró ingreso durante la fecha más reciente.
+    latest_date = frame["fecha"].max()
+    history_start = latest_date - timedelta(days=364)
+    history = frame[frame["fecha"] >= history_start].copy()
+    history = history[
+        history["procedencia"].notna()
+        & history["procedencia"].astype("string").str.strip().ne("")
+    ].copy()
+    history["volumen_t"] = pd.to_numeric(history["volumen_t"], errors="coerce")
+    history["precio_promedio"] = pd.to_numeric(history["precio_promedio"], errors="coerce")
+    origin_history = []
+    keys = ["producto_filtro", "departamento_procedencia", "procedencia"]
+    for (product_key, department, province), group in history.groupby(keys, dropna=False):
+        labels = group["producto"].dropna().astype(str)
+        label = labels.mode().iloc[0] if not labels.empty else str(product_key).title()
+        volume = group["volumen_t"].sum(min_count=1)
+        price = group["precio_promedio"].mean()
+        origin_history.append({
+            "product_key": str(product_key),
+            "product": label,
+            "origin_department": "" if pd.isna(department) else str(department),
+            "origin_province": str(province),
+            "first_seen": group["fecha"].min().strftime("%d/%m/%Y"),
+            "last_seen": group["fecha"].max().strftime("%d/%m/%Y"),
+            "active_days": int(group["fecha"].dt.date.nunique()),
+            "record_count": int(len(group)),
+            "market_count": int(group["mercado"].nunique()),
+            "volume_t": None if pd.isna(volume) else round(float(volume), 2),
+            "price_avg": None if pd.isna(price) else round(float(price), 2),
+        })
+
     now = datetime.now(ZoneInfo("America/Lima"))
     payload = {
-        "contract_version": 1,
+        "contract_version": 2,
         "layer": "gold",
         "source": "SISAP · MIDAGRI vía Arquitectura Medallón",
         "source_url": "http://sistemas.midagri.gob.pe/sisap/portal2/mayorista/",
@@ -110,6 +143,12 @@ def main() -> int:
         "market_dates": market_dates,
         "fetched_at": now.isoformat(timespec="minutes"),
         "records": records,
+        "origin_history": origin_history,
+        "history_window": {
+            "days": 365,
+            "from": history_start.strftime("%d/%m/%Y"),
+            "to": latest_date.strftime("%d/%m/%Y"),
+        },
         "errors": [],
         "lineage": {
             "bronze": "Precios Mayoristas/Arquitectura Medallón/Output/bronze/sisap_mercados",
@@ -121,7 +160,10 @@ def main() -> int:
     temporary = TARGET.with_suffix(".tmp")
     temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     temporary.replace(TARGET)
-    print(f"OK {TARGET}: {len(records)} filas; fecha máxima {payload['date']}")
+    print(
+        f"OK {TARGET}: {len(records)} filas diarias, "
+        f"{len(origin_history)} relaciones históricas; fecha máxima {payload['date']}"
+    )
     return 0
 
 
