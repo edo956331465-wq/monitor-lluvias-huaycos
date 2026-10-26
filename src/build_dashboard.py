@@ -1541,7 +1541,8 @@ def main() -> int:
     # Fecha de Lima, no la de la maquina: en un runner UTC el dia cambiaria a las 19:00.
     today = datetime.now(ZoneInfo("America/Lima")).date()
     rows = [summarise_point(p, thr.get(p["id"]), hourly, ens.get(p["id"], []), today) for p in points]
-    sisap_path = CACHE_DIR / "sisap_latest.json"
+    gold_path = DATA_DIR / "gold" / "sisap_dashboard.json"
+    sisap_path = gold_path if gold_path.exists() else CACHE_DIR / "sisap_latest.json"
     sisap_records = []
     if sisap_path.exists():
         try:

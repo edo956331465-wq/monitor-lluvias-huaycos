@@ -8,9 +8,10 @@ import re
 import unicodedata
 from collections import defaultdict
 
-from common import CACHE_DIR, OUT_DIR, banner, load_points
+from common import CACHE_DIR, DATA_DIR, OUT_DIR, banner, load_points
 
-SOURCE = CACHE_DIR / "sisap_latest.json"
+GOLD_SOURCE = DATA_DIR / "gold" / "sisap_dashboard.json"
+CACHE_SOURCE = CACHE_DIR / "sisap_latest.json"
 
 
 def norm(value: str) -> str:
@@ -75,8 +76,9 @@ def fmt(value, decimals=2):
 def main() -> int:
     banner("Construyendo hoja de precios SISAP")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    if SOURCE.exists():
-        payload = json.loads(SOURCE.read_text(encoding="utf-8"))
+    source = GOLD_SOURCE if GOLD_SOURCE.exists() else CACHE_SOURCE
+    if source.exists():
+        payload = json.loads(source.read_text(encoding="utf-8"))
     else:
         payload = {"date": "—", "fetched_at": "—", "records": [], "errors": ["Sin datos SISAP"]}
     records = payload.get("records", [])

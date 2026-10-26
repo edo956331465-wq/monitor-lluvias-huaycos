@@ -23,6 +23,7 @@ de emergencia sin validación oficial.
 | `out/apps_script/` | Paquete listo para publicar el tablero como Web App de Google. |
 | `data/warehouse.sqlite` | Almacén con climatología, pronóstico y umbrales. |
 | `data/geodata/` | Contorno del Perú, regiones, ríos y quebradas (simplificados). |
+| `data/gold/sisap_dashboard.json` | Contrato Gold versionado con precios y procedencias para GitHub Pages. |
 
 El tablero abre con el **mapa nacional de alertas** y deja el resto del detalle en
 secciones plegables: transecto costero, cuencas altas, mapas de quebradas por
@@ -49,6 +50,27 @@ La primera corrida tarda 3–5 minutos (descarga ~21 años-punto de climatologí
 la geometría de OSM). Las siguientes son de segundos, porque todo queda en
 `data/cache/` y `data/geodata/`.
 
+## Integración SISAP con arquitectura medallón
+
+El dashboard no consulta SISAP desde GitHub Actions. La adquisición y calidad se
+resuelven localmente en el proyecto hermano `Precios Mayoristas`:
+
+```text
+SISAP → Bronze (HTML + metadata/hash) → Silver (Parquet limpio y deduplicado)
+      → Gold del dashboard (JSON ligero) → GitHub → GitHub Pages
+```
+
+`src/export_sisap_medallion.py` lee la partición Silver más reciente, conserva
+la última fecha válida por mercado y publica el contrato
+`data/gold/sisap_dashboard.json`. Para exportar, versionar y subirlo:
+
+```powershell
+.\scripts\sync_sisap_medallion.ps1
+```
+
+La actualización de GitHub Pages se activa con ese `push`; si SISAP falla, se
+mantiene el último contrato Gold válido y el sitio no queda vacío.
+
 ## Estructura
 
 ```
@@ -59,9 +81,11 @@ src/fetch_sutran.py        alertas viales de SUTRAN y estado oficial de El Niño
 src/ingest_climatology.py  ERA5 1991–2020 → umbrales p95/p99 de 1 y 3 días
 src/ingest_forecast.py     ECMWF/GFS/ICON + ensemble de 50 miembros
 src/build_dashboard.py     índice de riesgo + mapa nacional + tablero HTML
+src/export_sisap_medallion.py  Silver SISAP → contrato Gold del dashboard
 src/verify_events.py       validación contra 2017 y 2023
 src/publish_gas.py         empaqueta el tablero para Google Apps Script
 run_all.py                 orquestador
+scripts/sync_sisap_medallion.ps1  publicación local diaria de SISAP Gold
 ```
 
 Para agregar una ciudad, basta una fila en `config/points.csv` y volver a correr.

@@ -55,7 +55,10 @@ def main() -> int:
         return 1
     if not run("verify_rule.py"):
         print("  (se continua sin verificacion de la regla)")
-    if not run("fetch_sisap.py"):
+    gold_sisap = HERE / "data" / "gold" / "sisap_dashboard.json"
+    if gold_sisap.exists():
+        print("\n>>> SISAP: usando contrato Gold publicado por la arquitectura medallón")
+    elif not run("fetch_sisap.py"):
         print("  (se continua sin precios SISAP)")
     if not run("build_prices.py"):
         print("  (la hoja de precios SISAP no se genero)")

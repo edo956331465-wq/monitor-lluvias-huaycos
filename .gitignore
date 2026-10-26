@@ -3,6 +3,8 @@
 data/cache/
 data/warehouse.sqlite
 
+# data/gold contiene contratos de publicación versionados para GitHub Pages.
+
 # Salidas que se producen en cada ejecución
 out/dashboard.html
 out/pronostico_resumen.csv
