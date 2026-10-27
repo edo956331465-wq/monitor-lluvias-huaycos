@@ -253,6 +253,26 @@ histórico, que no son gratuitos.
 
 ## Limitaciones conocidas
 
+### Modelo histórico de cierre de puertos
+
+La página `puertos.html` puntúa cada puerto y día con dos regresiones
+logísticas regularizadas: probabilidad de alguna restricción (niveles DICAPI
+II–V) y probabilidad de cierre total (nivel V). El entrenamiento cruza el panel
+histórico DICAPI, oleaje Copernicus y viento del proyecto hermano `Precios
+Mayoristas`.
+
+- Entrenamiento: 2022-01-17 a 2023-12-31.
+- Validación temporal: 2024-01-01 a 2024-07-08.
+- Dataset: 79.380 observaciones puerto-día, 121 puertos.
+- Artefacto operativo: `data/gold/port_closure_model.json`.
+- Entrenamiento reproducible: `python src/train_port_model.py`.
+
+El pipeline de cada tres horas no reentrena: aplica el artefacto Gold a los
+pronósticos ECMWF/GFS/ICON recién descargados. El reentrenamiento se ejecuta
+cuando se amplían los históricos locales y luego se versiona el nuevo artefacto.
+La fecha DICAPI usada es la de publicación; la hora efectiva indicada dentro de
+la resolución PDF queda como mejora pendiente.
+
 - **Resolución efectiva.** Los 21 puntos caen en solo **20 celdas** del retículo
   de 0,25° (~28 km). Chosica y Santa Eulalia comparten celda y por eso muestran
   valores idénticos: no es un error, es el límite del modelo.

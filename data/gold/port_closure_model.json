@@ -1,0 +1,663 @@
+{
+  "contract_version": 1,
+  "layer": "gold",
+  "model_type": "ridge_logistic_temporal",
+  "trained_at": "2026-10-27T15:53-05:00",
+  "training_period": {
+    "from": "2022-01-17",
+    "to": "2023-12-31"
+  },
+  "validation_period": {
+    "from": "2024-01-01",
+    "to": "2024-07-08"
+  },
+  "rows": {
+    "total": 79380,
+    "training": 57158,
+    "validation": 22222
+  },
+  "ports": 121,
+  "captaincies": [
+    "Callao",
+    "Chancay",
+    "Chimbote",
+    "Huacho",
+    "Ilo",
+    "Mollendo",
+    "Paita",
+    "Pimentel",
+    "Pisco",
+    "Salaverry",
+    "San Juan",
+    "Supe",
+    "Talara",
+    "Zorritos"
+  ],
+  "global_priors": {
+    "restriction": 0.18287903705518038,
+    "closure": 0.042566219951712794
+  },
+  "port_priors": {
+    "1": {
+      "restriction": 0.047817,
+      "closure": 0.008024
+    },
+    "10": {
+      "restriction": 0.045941,
+      "closure": 0.004272
+    },
+    "104": {
+      "restriction": 0.955908,
+      "closure": 0.002046
+    },
+    "106": {
+      "restriction": 0.161923,
+      "closure": 0.065977
+    },
+    "107": {
+      "restriction": 0.158383,
+      "closure": 0.065977
+    },
+    "108": {
+      "restriction": 0.161923,
+      "closure": 0.065977
+    },
+    "109": {
+      "restriction": 0.158383,
+      "closure": 0.065977
+    },
+    "11": {
+      "restriction": 0.104102,
+      "closure": 0.004272
+    },
+    "110": {
+      "restriction": 0.045762,
+      "closure": 0.005088
+    },
+    "111": {
+      "restriction": 0.188138,
+      "closure": 0.071161
+    },
+    "112": {
+      "restriction": 0.153073,
+      "closure": 0.051818
+    },
+    "113": {
+      "restriction": 0.206623,
+      "closure": 0.109039
+    },
+    "12": {
+      "restriction": 0.045941,
+      "closure": 0.004272
+    },
+    "13": {
+      "restriction": 0.045941,
+      "closure": 0.004272
+    },
+    "136": {
+      "restriction": 0.200489,
+      "closure": 0.009005
+    },
+    "137": {
+      "restriction": 0.170133,
+      "closure": 0.030152
+    },
+    "14": {
+      "restriction": 0.045941,
+      "closure": 0.004272
+    },
+    "140": {
+      "restriction": 0.153073,
+      "closure": 0.051818
+    },
+    "141": {
+      "restriction": 0.188138,
+      "closure": 0.071161
+    },
+    "145": {
+      "restriction": 0.199783,
+      "closure": 0.077011
+    },
+    "146": {
+      "restriction": 0.209438,
+      "closure": 0.196566
+    },
+    "147": {
+      "restriction": 0.140825,
+      "closure": 0.112313
+    },
+    "148": {
+      "restriction": 0.257582,
+      "closure": 0.119378
+    },
+    "149": {
+      "restriction": 0.137729,
+      "closure": 0.112313
+    },
+    "15": {
+      "restriction": 0.044064,
+      "closure": 0.004272
+    },
+    "150": {
+      "restriction": 0.137729,
+      "closure": 0.112313
+    },
+    "151": {
+      "restriction": 0.140825,
+      "closure": 0.112313
+    },
+    "16": {
+      "restriction": 0.015439,
+      "closure": 0.005749
+    },
+    "17": {
+      "restriction": 0.02263,
+      "closure": 0.011405
+    },
+    "18": {
+      "restriction": 0.02263,
+      "closure": 0.011405
+    },
+    "19": {
+      "restriction": 0.02263,
+      "closure": 0.011405
+    },
+    "2": {
+      "restriction": 0.042188,
+      "closure": 0.004272
+    },
+    "20": {
+      "restriction": 0.02263,
+      "closure": 0.011405
+    },
+    "21": {
+      "restriction": 0.02263,
+      "closure": 0.011405
+    },
+    "22": {
+      "restriction": 0.02263,
+      "closure": 0.011405
+    },
+    "23": {
+      "restriction": 0.092052,
+      "closure": 0.057974
+    },
+    "24": {
+      "restriction": 0.094032,
+      "closure": 0.059954
+    },
+    "25": {
+      "restriction": 0.094032,
+      "closure": 0.059954
+    },
+    "26": {
+      "restriction": 0.094032,
+      "closure": 0.059954
+    },
+    "27": {
+      "restriction": 0.078584,
+      "closure": 0.047451
+    },
+    "28": {
+      "restriction": 0.174883,
+      "closure": 0.073767
+    },
+    "29": {
+      "restriction": 0.150058,
+      "closure": 0.056624
+    },
+    "3": {
+      "restriction": 0.042188,
+      "closure": 0.004272
+    },
+    "30": {
+      "restriction": 0.189815,
+      "closure": 0.057535
+    },
+    "31": {
+      "restriction": 0.135135,
+      "closure": 0.061015
+    },
+    "32": {
+      "restriction": 0.034489,
+      "closure": 0.00403
+    },
+    "33": {
+      "restriction": 0.038029,
+      "closure": 0.00403
+    },
+    "34": {
+      "restriction": 0.034489,
+      "closure": 0.00403
+    },
+    "35": {
+      "restriction": 0.043339,
+      "closure": 0.00403
+    },
+    "36": {
+      "restriction": 0.107056,
+      "closure": 0.051818
+    },
+    "37": {
+      "restriction": 0.114135,
+      "closure": 0.053588
+    },
+    "38": {
+      "restriction": 0.24836,
+      "closure": 0.126662
+    },
+    "39": {
+      "restriction": 0.362605,
+      "closure": 0.184773
+    },
+    "4": {
+      "restriction": 0.042188,
+      "closure": 0.004272
+    },
+    "40": {
+      "restriction": 0.331888,
+      "closure": 0.167708
+    },
+    "41": {
+      "restriction": 0.114135,
+      "closure": 0.053588
+    },
+    "42": {
+      "restriction": 0.180686,
+      "closure": 0.002391
+    },
+    "43": {
+      "restriction": 0.183632,
+      "closure": 0.002244
+    },
+    "44": {
+      "restriction": 0.148482,
+      "closure": 0.002244
+    },
+    "45": {
+      "restriction": 0.127413,
+      "closure": 0.002073
+    },
+    "46": {
+      "restriction": 0.125663,
+      "closure": 0.002343
+    },
+    "47": {
+      "restriction": 0.216498,
+      "closure": 0.002221
+    },
+    "48": {
+      "restriction": 0.388551,
+      "closure": 0.002391
+    },
+    "49": {
+      "restriction": 0.181025,
+      "closure": 0.002396
+    },
+    "5": {
+      "restriction": 0.042188,
+      "closure": 0.004272
+    },
+    "50": {
+      "restriction": 0.142708,
+      "closure": 0.030257
+    },
+    "51": {
+      "restriction": 0.139206,
+      "closure": 0.032009
+    },
+    "52": {
+      "restriction": 0.127792,
+      "closure": 0.027777
+    },
+    "53": {
+      "restriction": 0.094721,
+      "closure": 0.032415
+    },
+    "54": {
+      "restriction": 0.381776,
+      "closure": 0.032415
+    },
+    "55": {
+      "restriction": 0.094721,
+      "closure": 0.032415
+    },
+    "56": {
+      "restriction": 0.142708,
+      "closure": 0.030257
+    },
+    "57": {
+      "restriction": 0.147962,
+      "closure": 0.030257
+    },
+    "58": {
+      "restriction": 0.146211,
+      "closure": 0.030257
+    },
+    "59": {
+      "restriction": 0.13872,
+      "closure": 0.028407
+    },
+    "6": {
+      "restriction": 0.042188,
+      "closure": 0.004272
+    },
+    "60": {
+      "restriction": 0.136736,
+      "closure": 0.028357
+    },
+    "61": {
+      "restriction": 0.181586,
+      "closure": 0.008156
+    },
+    "62": {
+      "restriction": 0.355419,
+      "closure": 0.01243
+    },
+    "63": {
+      "restriction": 0.355419,
+      "closure": 0.01243
+    },
+    "64": {
+      "restriction": 0.295764,
+      "closure": 0.010173
+    },
+    "65": {
+      "restriction": 0.158946,
+      "closure": 0.02003
+    },
+    "66": {
+      "restriction": 0.151841,
+      "closure": 0.028911
+    },
+    "67": {
+      "restriction": 0.219553,
+      "closure": 0.021653
+    },
+    "68": {
+      "restriction": 0.273427,
+      "closure": 0.018189
+    },
+    "69": {
+      "restriction": 0.259268,
+      "closure": 0.00934
+    },
+    "7": {
+      "restriction": 0.042188,
+      "closure": 0.004272
+    },
+    "70": {
+      "restriction": 0.248648,
+      "closure": 0.01465
+    },
+    "71": {
+      "restriction": 0.106377,
+      "closure": 0.013704
+    },
+    "72": {
+      "restriction": 0.165463,
+      "closure": 0.01111
+    },
+    "73": {
+      "restriction": 0.21325,
+      "closure": 0.01111
+    },
+    "74": {
+      "restriction": 0.282831,
+      "closure": 0.018072
+    },
+    "75": {
+      "restriction": 0.294666,
+      "closure": 0.018189
+    },
+    "76": {
+      "restriction": 0.208528,
+      "closure": 0.030152
+    },
+    "77": {
+      "restriction": 0.194566,
+      "closure": 0.030152
+    },
+    "78": {
+      "restriction": 0.175369,
+      "closure": 0.030152
+    },
+    "79": {
+      "restriction": 0.159662,
+      "closure": 0.023171
+    },
+    "8": {
+      "restriction": 0.31611,
+      "closure": 0.008024
+    },
+    "80": {
+      "restriction": 0.126503,
+      "closure": 0.023171
+    },
+    "81": {
+      "restriction": 0.115861,
+      "closure": 0.021519
+    },
+    "82": {
+      "restriction": 0.123013,
+      "closure": 0.023171
+    },
+    "83": {
+      "restriction": 0.385715,
+      "closure": 0.129193
+    },
+    "84": {
+      "restriction": 0.385715,
+      "closure": 0.129193
+    },
+    "85": {
+      "restriction": 0.385715,
+      "closure": 0.129193
+    },
+    "86": {
+      "restriction": 0.385715,
+      "closure": 0.129193
+    },
+    "87": {
+      "restriction": 0.38433,
+      "closure": 0.127807
+    },
+    "88": {
+      "restriction": 0.385715,
+      "closure": 0.129193
+    },
+    "89": {
+      "restriction": 0.38433,
+      "closure": 0.127807
+    },
+    "9": {
+      "restriction": 0.315594,
+      "closure": 0.003065
+    },
+    "90": {
+      "restriction": 0.394025,
+      "closure": 0.119497
+    }
+  },
+  "features": [
+    "wave_height",
+    "wave_period",
+    "wind_speed",
+    "wave_height_sq",
+    "wind_speed_sq",
+    "wave_x_wind",
+    "wave_dir_sin",
+    "wave_dir_cos",
+    "wind_dir_sin",
+    "wind_dir_cos",
+    "month_sin",
+    "month_cos",
+    "port_restriction_prior",
+    "port_closure_prior",
+    "captaincy=Chancay",
+    "captaincy=Chimbote",
+    "captaincy=Huacho",
+    "captaincy=Ilo",
+    "captaincy=Mollendo",
+    "captaincy=Paita",
+    "captaincy=Pimentel",
+    "captaincy=Pisco",
+    "captaincy=Salaverry",
+    "captaincy=San Juan",
+    "captaincy=Supe",
+    "captaincy=Talara",
+    "captaincy=Zorritos"
+  ],
+  "models": {
+    "restriction": {
+      "intercept": -8.770602947877927,
+      "coefficients": [
+        0.2456832483513073,
+        0.15078288652943778,
+        0.3451701709412728,
+        0.753376188009277,
+        -0.004977509867207751,
+        -0.05391275384026464,
+        -2.3239260543520124,
+        1.505806016879241,
+        -0.37910094940888656,
+        0.2991827810191478,
+        0.16680690521923683,
+        -0.09144200734962407,
+        9.145100429961175,
+        2.8668529496994526,
+        -0.1342918701539344,
+        0.08811281196762744,
+        -0.35191403929316195,
+        0.28715740261804734,
+        -0.683632602531804,
+        -0.43209053876405906,
+        1.4162191476382269,
+        -0.0992735555282349,
+        0.5717213871391512,
+        -1.3786289801506095,
+        -0.41591301079741744,
+        -0.8531510621657514,
+        -2.4926143178899793
+      ],
+      "threshold": 0.30000000000000004,
+      "validation": {
+        "threshold": 0.3,
+        "auc": 0.8018,
+        "brier": 0.1012,
+        "precision": 0.3635,
+        "recall": 0.566,
+        "specificity": 0.8512,
+        "f1": 0.4427,
+        "support": 2901,
+        "samples": 22222,
+        "confusion": {
+          "tp": 1642,
+          "fp": 2875,
+          "fn": 1259,
+          "tn": 16446
+        }
+      },
+      "prevalence_train": 0.18288,
+      "prevalence_validation": 0.13055
+    },
+    "closure": {
+      "intercept": -22.192522275361046,
+      "coefficients": [
+        5.917484601371978,
+        0.15244106012571668,
+        0.23149347980809656,
+        -0.6260802863733218,
+        0.013679337750235407,
+        -0.09172892288193914,
+        -4.6600778646722505,
+        -1.7197124275257551,
+        -0.23497589113327227,
+        0.5665666624288435,
+        0.3516258336541907,
+        -0.2869962304463746,
+        -0.9188016165583973,
+        17.89753353909223,
+        2.1048475686692383,
+        3.788918316208393,
+        2.6929805803617137,
+        -2.689010200642822,
+        3.178810254055635,
+        2.029019291724425,
+        6.085705624804224,
+        3.1614693306007475,
+        4.792874016975672,
+        2.9664963633593344,
+        3.0023606997528605,
+        3.4713747600241254,
+        4.8812356519906634
+      ],
+      "threshold": 0.12000000000000001,
+      "validation": {
+        "threshold": 0.12,
+        "auc": 0.6858,
+        "brier": 0.0595,
+        "precision": 0.3888,
+        "recall": 0.4522,
+        "specificity": 0.9428,
+        "f1": 0.4181,
+        "support": 1654,
+        "samples": 22222,
+        "confusion": {
+          "tp": 748,
+          "fp": 1176,
+          "fn": 906,
+          "tn": 19392
+        }
+      },
+      "prevalence_train": 0.04257,
+      "prevalence_validation": 0.07443
+    }
+  },
+  "heuristic_baseline": {
+    "restriction": {
+      "threshold": 0.38,
+      "auc": 0.7749,
+      "brier": 0.1611,
+      "precision": 0.2189,
+      "recall": 0.8128,
+      "specificity": 0.5646,
+      "f1": 0.3449,
+      "support": 2901,
+      "samples": 22222,
+      "confusion": {
+        "tp": 2358,
+        "fp": 8413,
+        "fn": 543,
+        "tn": 10908
+      }
+    },
+    "closure": {
+      "threshold": 0.55,
+      "auc": 0.806,
+      "brier": 0.1532,
+      "precision": 0.5116,
+      "recall": 0.1729,
+      "specificity": 0.9867,
+      "f1": 0.2585,
+      "support": 1654,
+      "samples": 22222,
+      "confusion": {
+        "tp": 286,
+        "fp": 273,
+        "fn": 1368,
+        "tn": 20295
+      }
+    }
+  },
+  "sources": {
+    "states": "C:\\Users\\anasists01\\OneDrive - FUKU E.I.R.L\\Proyectos\\Precios Mayoristas\\Output\\DICAPI\\DICAPI_Estado_Horarios_2022_actual.csv",
+    "waves": "C:\\Users\\anasists01\\OneDrive - FUKU E.I.R.L\\Proyectos\\Precios Mayoristas\\Output\\OLAS\\OLAS_Entrenamiento_Puertos_2022_actual.csv",
+    "wind": "C:\\Users\\anasists01\\OneDrive - FUKU E.I.R.L\\Proyectos\\Precios Mayoristas\\Output\\VIENTOS\\VIENTOS_Historico_Puertos.csv"
+  },
+  "limitations": [
+    "La fecha de DICAPI es fecha de publicación; la hora efectiva puede estar en el PDF.",
+    "La validación es temporal y observacional; no sustituye la decisión de DICAPI.",
+    "El artefacto predice condiciones asociadas a estados históricos, no causalidad."
+  ]
+}
