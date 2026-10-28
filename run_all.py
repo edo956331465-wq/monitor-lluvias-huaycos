@@ -62,6 +62,8 @@ def main() -> int:
         print("  (se continua sin precios SISAP)")
     if not run("fetch_ports_marine.py"):
         print("  (se continúa con el último contrato válido de puertos y mar)")
+    if not run("export_fish_supply.py"):
+        print("  (se continúa con el último contrato Gold de pescados)")
     if not run("build_prices.py"):
         print("  (la hoja de precios SISAP no se genero)")
     if not run("build_dashboard.py"):
@@ -70,6 +72,8 @@ def main() -> int:
         print("  (la hoja de riesgo de abastecimiento no se generó)")
     if not run("build_ports.py"):
         print("  (la hoja de puertos y condiciones marinas no se generó)")
+    if not run("build_fish.py"):
+        print("  (la hoja de pescados y riesgo portuario no se generó)")
     if not run("publish_gas.py"):
         print("  (el paquete de Apps Script no se genero)")
     if verify:
