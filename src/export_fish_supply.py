@@ -87,6 +87,14 @@ def main() -> int:
     for species in top_species:
         all_s = data[data["Especie"].eq(species)]
         s = recent[recent["Especie"].eq(species)]
+        species_latest = all_s["Fecha"].max()
+        current_rows = all_s[all_s["Fecha"].eq(species_latest)]
+        target_7d = species_latest - pd.Timedelta(days=7)
+        previous_dates = all_s.loc[all_s["Fecha"].le(target_7d), "Fecha"]
+        previous_date = previous_dates.max() if not previous_dates.empty else None
+        previous_rows = all_s[all_s["Fecha"].eq(previous_date)] if previous_date is not None else all_s.iloc[0:0]
+        week_rows = all_s[all_s["Fecha"].ge(species_latest - pd.Timedelta(days=6))]
+        month_rows = all_s[all_s["Fecha"].ge(species_latest - pd.Timedelta(days=29))]
         last30 = all_s[all_s["Fecha"].gt(latest - pd.Timedelta(days=30))]
         prev30 = all_s[(all_s["Fecha"].gt(latest - pd.Timedelta(days=60))) & (all_s["Fecha"].le(latest - pd.Timedelta(days=30)))]
         origins = s[~s["Capitania"].isin(["Sin mapear", "Revisión", "Importado"])].groupby(["Capitania", "Zona"])["Volumen_kg"].sum().sort_values(ascending=False)
@@ -103,6 +111,12 @@ def main() -> int:
             "volume_30_kg": round(vol30, 1), "volume_change_30d": round(vol30 / vol_prev - 1, 4) if vol_prev else None,
             "price_30": round(price30, 2) if price30 is not None else None,
             "price_change_30d": round(price30 / price_prev - 1, 4) if price30 and price_prev else None,
+            "produce_latest_date": species_latest.date().isoformat(),
+            "produce_current_price": round(weighted_price(current_rows), 2) if weighted_price(current_rows) is not None else None,
+            "produce_price_7d": round(weighted_price(previous_rows), 2) if weighted_price(previous_rows) is not None else None,
+            "produce_price_7d_date": previous_date.date().isoformat() if previous_date is not None else None,
+            "produce_price_week": round(weighted_price(week_rows), 2) if weighted_price(week_rows) is not None else None,
+            "produce_price_month": round(weighted_price(month_rows), 2) if weighted_price(month_rows) is not None else None,
             "mapped_share": round(mapped_total / float(s["Volumen_kg"].sum()), 5) if s["Volumen_kg"].sum() else 0,
             "concentration_hhi": round(hhi, 4), "origins": origin_rows, "markets": market_rows,
         })
