@@ -56,6 +56,19 @@ def weighted_price(frame):
     return float((valid["Precio_Prom"] * valid["Volumen_kg"]).sum() / valid["Volumen_kg"].sum())
 
 
+def summarize_origins(frame, limit: int = 14):
+    origins = frame[~frame["Capitania"].isin(["Sin mapear", "Revisión", "Importado"])].groupby(
+        ["Capitania", "Zona"]
+    )["Volumen_kg"].sum().sort_values(ascending=False)
+    total = float(origins.sum())
+    rows = [
+        {"captaincy": cap, "zone": zone, "volume_kg": round(float(volume), 1),
+         "share": round(float(volume / total), 5) if total else 0}
+        for (cap, zone), volume in origins.head(limit).items()
+    ]
+    return rows, total
+
+
 def main() -> int:
     banner("Exportando abastecimiento pesquero Gold")
     if not SOURCE.exists():
@@ -97,9 +110,10 @@ def main() -> int:
         month_rows = all_s[all_s["Fecha"].ge(species_latest - pd.Timedelta(days=29))]
         last30 = all_s[all_s["Fecha"].gt(latest - pd.Timedelta(days=30))]
         prev30 = all_s[(all_s["Fecha"].gt(latest - pd.Timedelta(days=60))) & (all_s["Fecha"].le(latest - pd.Timedelta(days=30)))]
-        origins = s[~s["Capitania"].isin(["Sin mapear", "Revisión", "Importado"])].groupby(["Capitania", "Zona"])["Volumen_kg"].sum().sort_values(ascending=False)
-        mapped_total = float(origins.sum())
-        origin_rows = [{"captaincy": cap, "zone": zone, "volume_kg": round(float(vol), 1), "share": round(float(vol / mapped_total), 5) if mapped_total else 0} for (cap, zone), vol in origins.head(12).items()]
+        origin_rows, mapped_total = summarize_origins(s, 12)
+        origins_daily, _ = summarize_origins(current_rows)
+        origins_week, _ = summarize_origins(week_rows)
+        origins_month, _ = summarize_origins(month_rows)
         markets = s.groupby("Mercado")["Volumen_kg"].sum().sort_values(ascending=False)
         market_total = float(markets.sum())
         market_rows = [{"market": str(name), "volume_kg": round(float(vol), 1), "share": round(float(vol / market_total), 5) if market_total else 0} for name, vol in markets.head(8).items()]
@@ -120,6 +134,7 @@ def main() -> int:
             "produce_current_volume_kg": round(float(current_rows["Volumen_kg"].sum()), 1),
             "produce_volume_7d_kg": round(float(previous_rows["Volumen_kg"].sum()), 1) if previous_date is not None else None,
             "produce_volume_month_kg": round(float(month_rows["Volumen_kg"].sum()), 1),
+            "origins_daily": origins_daily, "origins_week": origins_week, "origins_month": origins_month,
             "mapped_share": round(mapped_total / float(s["Volumen_kg"].sum()), 5) if s["Volumen_kg"].sum() else 0,
             "concentration_hhi": round(hhi, 4), "origins": origin_rows, "markets": market_rows,
         })
