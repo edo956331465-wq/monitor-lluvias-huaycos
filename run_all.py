@@ -64,6 +64,8 @@ def main() -> int:
         print("  (se continúa con el último contrato válido de puertos y mar)")
     if not run("export_fish_supply.py"):
         print("  (se continúa con el último contrato Gold de pescados)")
+    if not run("fetch_fish_provider_prices.py"):
+        print("  (se continúa sin precios observados del proveedor)")
     if not run("build_prices.py"):
         print("  (la hoja de precios SISAP no se genero)")
     if not run("build_dashboard.py"):
