@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import math
 import time
+import unicodedata
 import urllib.parse
 import urllib.request
 from datetime import datetime
@@ -22,6 +23,22 @@ MODEL = DATA_DIR / "gold" / "port_closure_model.json"
 INLAND = {"Iquitos", "Pto. Maldonado", "Pucallpa", "Puno", "Yurimaguas"}
 WIND_MODELS = ["ecmwf_ifs025", "gfs_seamless", "icon_seamless"]
 WAVE_MODELS = ["ecmwf_wam025", "ncep_gfswave025"]
+
+
+def normalize_port_status(value: str | None) -> str:
+    """Convierte las distintas etiquetas operativas de DICAPI a un contrato estable."""
+    raw = (value or "").strip()
+    folded = "".join(
+        character for character in unicodedata.normalize("NFKD", raw)
+        if not unicodedata.combining(character)
+    ).casefold()
+    if "parcial" in folded:
+        return "Puerto Parcialmente Cerrado"
+    if "cierre" in folded or "cerrado" in folded:
+        return "Puerto Cerrado"
+    if "abierto" in folded or "apertura" in folded:
+        return "Puerto Abierto"
+    return raw or "Sin información"
 
 
 def maximum(values):
@@ -155,7 +172,8 @@ def main() -> int:
             "id": str(item.get("portId", "")), "code": str(item.get("code", "")),
             "name": item.get("port", ""), "captaincy": item.get("captaincy", ""),
             "lat": float(coordinates["lat"]), "lon": float(coordinates["long"]),
-            "status": item.get("levelName", "Sin información"),
+            "status": normalize_port_status(item.get("levelName")),
+            "status_source": item.get("levelName", "Sin información"),
             "publication_date": item.get("publication_date", ""),
             "updated_at": item.get("updated_at", ""),
             "resolution": item.get("resolution_number", ""),

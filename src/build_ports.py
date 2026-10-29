@@ -3,6 +3,7 @@ from __future__ import annotations
 import html, json
 from collections import Counter
 from common import DATA_DIR, OUT_DIR, banner
+from fetch_ports_marine import normalize_port_status
 
 SOURCE = DATA_DIR / "gold" / "ports_marine.json"
 PERU = DATA_DIR / "geodata" / "peru.json"
@@ -49,6 +50,7 @@ def main():
     if not SOURCE.exists(): print("  No existe contrato Gold de puertos"); return 1
     data=json.loads(SOURCE.read_text(encoding="utf-8")); ports=data.get("ports",[])
     for port in ports:
+        port["status"] = normalize_port_status(port.get("status"))
         port["zone"] = ZONE_BY_CAPTAINCY.get(port.get("captaincy"), "Sin zona")
     counts=Counter(p.get("status","Sin información") for p in ports)
     model=data.get("model") or {}; validation=model.get("validation") or {}
