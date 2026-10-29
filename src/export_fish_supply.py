@@ -117,6 +117,9 @@ def main() -> int:
             "produce_price_7d_date": previous_date.date().isoformat() if previous_date is not None else None,
             "produce_price_week": round(weighted_price(week_rows), 2) if weighted_price(week_rows) is not None else None,
             "produce_price_month": round(weighted_price(month_rows), 2) if weighted_price(month_rows) is not None else None,
+            "produce_current_volume_kg": round(float(current_rows["Volumen_kg"].sum()), 1),
+            "produce_volume_7d_kg": round(float(previous_rows["Volumen_kg"].sum()), 1) if previous_date is not None else None,
+            "produce_volume_month_kg": round(float(month_rows["Volumen_kg"].sum()), 1),
             "mapped_share": round(mapped_total / float(s["Volumen_kg"].sum()), 5) if s["Volumen_kg"].sum() else 0,
             "concentration_hhi": round(hhi, 4), "origins": origin_rows, "markets": market_rows,
         })
