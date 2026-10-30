@@ -1,0 +1,17 @@
+{
+  "layer": "bronze",
+  "fetched_at": "2026-10-30T12:45:40-05:00",
+  "sources": {
+    "produce_vedas": "https://www.gob.pe/institucion/produce/colecciones/1918-vedas",
+    "imarpe_pelagicos": "https://www.gob.pe/institucion/imarpe/colecciones/52287-informes-que-dan-origen-a-r-m-pelagicos",
+    "imarpe_demersales": "https://www.gob.pe/institucion/imarpe/colecciones/84268-informes-que-dan-origen-a-r-m-demersales",
+    "imarpe_gti": "https://www.gob.pe/institucion/imarpe/colecciones/45774-grupo-de-trabajo-institucional-el-nino-g-t-i"
+  },
+  "successful": [
+    "imarpe_demersales",
+    "imarpe_gti",
+    "imarpe_pelagicos",
+    "produce_vedas"
+  ],
+  "failures": {}
+}
