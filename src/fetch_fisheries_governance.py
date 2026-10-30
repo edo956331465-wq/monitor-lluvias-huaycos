@@ -100,7 +100,11 @@ def species_matches(text: str) -> list[str]:
 def fetch(url: str) -> str:
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT or "Mozilla/5.0"})
     with urllib.request.urlopen(request, timeout=90) as response:
-        return response.read().decode("utf-8", "replace")
+        raw = response.read()
+        try:
+            return raw.decode("utf-8")
+        except UnicodeDecodeError:
+            return raw.decode("cp1252", "replace")
 
 
 def parse_cards(source: str, source_url: str, body: str) -> list[dict]:
@@ -116,6 +120,62 @@ def parse_cards(source: str, source_url: str, body: str) -> list[dict]:
             "extraction_method": "official_index_html", "confidence": "alta" if day and title else "media",
         })
     return records
+
+
+def meta_description(body: str) -> str:
+    tag = next((value for value in re.findall(r"<meta\b[^>]*>", body, re.I | re.S)
+                if re.search(r'name=["\']description["\']', value, re.I)), "")
+    match = re.search(r'content=["\'](.*?)["\']', tag, re.I | re.S)
+    return clean(match.group(1)) if match else ""
+
+
+def explicit_period(text: str) -> tuple[date, date] | None:
+    """Extrae periodos expresos; no infiere vigencias desde la fecha de publicación."""
+    normalized = fold(text)
+    same_month = re.search(
+        r"(?:del|desde el)\s+(\d{1,2})\s+(?:al|hasta el)\s+(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})",
+        normalized,
+    )
+    if same_month and same_month.group(3) in MONTHS:
+        month, year = MONTHS[same_month.group(3)], int(same_month.group(4))
+        return date(year, month, int(same_month.group(1))), date(year, month, int(same_month.group(2)))
+    full = re.search(
+        r"(?:del|desde el)\s+(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4}).{0,80}?"
+        r"(?:al|hasta el)\s+(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})",
+        normalized,
+    )
+    if full and full.group(2) in MONTHS and full.group(5) in MONTHS:
+        return (
+            date(int(full.group(3)), MONTHS[full.group(2)], int(full.group(1))),
+            date(int(full.group(6)), MONTHS[full.group(5)], int(full.group(4))),
+        )
+    return None
+
+
+def enrich_regulations(regulations: list[dict], failures: dict) -> None:
+    details = BRONZE / "resolution_details"
+    details.mkdir(parents=True, exist_ok=True)
+    for item in regulations:
+        if item["measure_type"] != "veda_o_suspension" or not item["species_keys"]:
+            continue
+        slug = item["url"].rstrip("/").rsplit("/", 1)[-1]
+        path = details / f"{slug}.html.gz"
+        try:
+            body = fetch(item["url"])
+            with gzip.open(path, "wt", encoding="utf-8") as stream:
+                stream.write(body)
+        except Exception as exc:  # noqa: BLE001
+            failures[f"detail:{slug}"] = str(exc)
+            if not path.exists():
+                continue
+            with gzip.open(path, "rt", encoding="utf-8") as stream:
+                body = stream.read()
+        detail = meta_description(body)
+        if detail:
+            item["official_description"] = detail
+        period = explicit_period(f"{item['title']} {item['summary']} {detail}")
+        if period:
+            item["effective_period"] = {"start_date": period[0].isoformat(), "end_date": period[1].isoformat()}
 
 
 def calendar_window(rule: dict, today: date) -> tuple[date, date, str, int]:
@@ -163,6 +223,7 @@ def main() -> int:
         return 0 if GOLD.exists() else 1
 
     regulations = parse_cards("PRODUCE", SOURCES["produce_vedas"], fetched["produce_vedas"])
+    enrich_regulations(regulations, failures)
     science = []
     for name in ("imarpe_pelagicos", "imarpe_demersales", "imarpe_gti"):
         if name in fetched:
@@ -197,6 +258,19 @@ def main() -> int:
             (item for item in science if key in item["species_keys"]),
             key=lambda item: item["published_at"] or "", reverse=True,
         )[:5]
+        for item in related_regulations:
+            period = item.get("effective_period")
+            if not period:
+                continue
+            start, end = date.fromisoformat(period["start_date"]), date.fromisoformat(period["end_date"])
+            status = "En veda" if start <= today <= end else "Próxima" if today < start and (start - today).days <= 30 else "Finalizada"
+            rules.append({
+                "species_key": key, "species": key.title(), "start_date": start.isoformat(),
+                "end_date": end.isoformat(), "scope": "Según texto de la resolución",
+                "resolution": item["title"], "source_url": item["url"], "status": status,
+                "days_to_change": (end - today).days if status == "En veda" else (start - today).days,
+                "confidence": "alta", "extraction_method": "official_resolution_explicit_period",
+            })
         active = next((rule for rule in rules if rule["status"] == "En veda"), None)
         upcoming = next((rule for rule in rules if rule["status"] == "Próxima"), None)
         regulatory_status = "En veda" if active else "Próxima veda" if upcoming else "Sin veda recurrente activa"
