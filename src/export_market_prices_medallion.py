@@ -41,6 +41,57 @@ EMMSA_PRODUCTS = {
     "yuca": "yuca", "zanahoria": "zanahoria", "zapallo": "zapallo",
 }
 
+# Equivalencias verificadas entre la etiqueta EMMSA y la variedad SISAP. Las
+# claves y valores están normalizados; el texto original siempre se conserva.
+VARIETY_ALIASES = {
+    ("papa", "papa amarilis"): "papa amarilla",
+    ("papa", "papa blanca valle otros"): "papa blanca",
+    ("papa", "papa color valle otros"): "papa color",
+    ("papa", "papa huayro rojo moro negro runt marh u"): "papa huayro",
+    ("papa", "papa peruanita injerto"): "papa peruanita",
+    ("platano", "platanos bellaco"): "platano bellaco",
+    ("platano", "platanos biscochito"): "platano bizcocho",
+    ("platano", "platanos isla"): "platano isla",
+    ("platano", "platanos palillo"): "platano palillo",
+    ("platano", "platanos seda"): "platano seda selva",
+    ("uva", "uva borgo a negra"): "uva borgona",
+    ("pina", "pina hawayana"): "pina hawaiana",
+    ("palta", "palta villacampa"): "palta villa campa",
+    ("palta", "palta fuerte costa"): "palta fuerte",
+    ("palta", "palta fuerte selva"): "palta fuerte",
+    ("palta", "palta hall costa"): "palta hall",
+    ("palta", "palta hall selva"): "palta hall",
+    ("mango", "mango haden"): "mango haden hayde",
+    ("mango", "mango haden huaca"): "mango haden hayde",
+    ("mango", "mango edward huaca"): "mango edward",
+    ("mango", "mango edward planta"): "mango edward",
+    ("mango", "mango chato huaca"): "mango chato",
+    ("mango", "mango kent costa"): "mango kent",
+    ("aji seco", "aji seco panca"): "aji panca",
+    ("aji seco", "aji mirasol seco"): "aji mirasol",
+    ("aji fresco", "aji escabeche fresco zanahor liso"): "aji escabeche",
+    ("aji fresco", "aji montana chan costa selva"): "aji montana",
+    ("hortalizas chinas", "jolantau organica"): "holantau organica",
+    ("arveja grano verde", "arveja verde blanca criolla"): "arveja verde blanca serrana",
+    ("cebolla", "cebolla cabeza blanca nacional"): "cebolla cabeza blanca",
+    ("naranja", "naranja valencia selva"): "naranja valencia",
+    ("manzana", "manzana delicia costa sierra"): "manzana delicia",
+    ("manzana", "manzana delicia selva"): "manzana delicia",
+    ("otros fruticolas", "arandanos"): "arandano",
+}
+
+VARIETY_LABELS = {
+    ("papa", "papa amarilla"): "Papa amarilla",
+    ("platano", "platano palillo"): "Plátano palillo",
+    ("platano", "platano bellaco"): "Plátano bellaco",
+    ("platano", "platano bizcocho"): "Plátano bizcocho",
+    ("platano", "platano isla"): "Plátano isla",
+    ("platano", "platano seda selva"): "Plátano seda",
+    ("uva", "uva borgona"): "Uva borgoña",
+    ("pina", "pina hawaiana"): "Piña hawaiana",
+    ("otros fruticolas", "arandano"): "Arándano",
+}
+
 
 def digest(path: Path) -> str:
     h = hashlib.sha256()
@@ -61,6 +112,15 @@ def emmsa_key(product: object, variety: object) -> str | None:
 
 def variety_key(value: object) -> str:
     return norm(value) or "sin variedad"
+
+
+def canonical_variety(product_key: str, value: object, labels: dict[tuple[str, str], str]) -> tuple[str, str, bool]:
+    raw_key = variety_key(value)
+    canonical_key = VARIETY_ALIASES.get((product_key, raw_key), raw_key)
+    label = VARIETY_LABELS.get((product_key, canonical_key), labels.get((product_key, canonical_key)))
+    if not label:
+        label = str(value).strip().title() if str(value).strip() else "Sin variedad"
+    return canonical_key, label, canonical_key != raw_key
 
 
 def daily_summary(group: pd.DataFrame) -> dict:
@@ -130,10 +190,23 @@ def main() -> int:
                            ("price_max", "Precio_Max"), ("volume_t", "Volumen")):
         emmsa[target] = pd.to_numeric(emmsa[source], errors="coerce")
 
-    columns = ["date", "product_key", "source", "market", "variety", "price_min", "price_avg", "price_max", "volume_t"]
+    sisap_labels: dict[tuple[str, str], str] = {}
+    for (product, key), group in sisap.assign(_vkey=sisap["variety"].map(variety_key)).groupby(["product_key", "_vkey"]):
+        mode = group["variety"].mode()
+        sisap_labels[(str(product), str(key))] = mode.iloc[0] if not mode.empty else str(key).title()
+    alias_rows = 0
+    for frame in (sisap, emmsa):
+        frame["variety_raw"] = frame["variety"]
+        canonical = [canonical_variety(str(p), v, sisap_labels) for p, v in zip(frame["product_key"], frame["variety_raw"])]
+        frame["variety_key"] = [item[0] for item in canonical]
+        frame["variety"] = [item[1] for item in canonical]
+        frame["variety_alias_applied"] = [item[2] for item in canonical]
+        alias_rows += int(frame["variety_alias_applied"].sum())
+
+    columns = ["date", "product_key", "source", "market", "variety", "variety_raw", "variety_key",
+               "variety_alias_applied", "price_min", "price_avg", "price_max", "volume_t"]
     combined = pd.concat([sisap[columns], emmsa[columns]], ignore_index=True)
     combined = combined[combined["date"].notna()].copy()
-    combined["variety_key"] = combined["variety"].map(variety_key)
 
     summaries = []
     for (product, source), group in combined.groupby(["product_key", "source"]):
@@ -144,14 +217,23 @@ def main() -> int:
         summaries.append({"product_key": product, "product": product_label(product), "source": source,
                           "variety_key": vkey, "variety": labels.iloc[0] if not labels.empty else vkey.title(),
                           **daily_summary(group)})
+    cross_source_varieties = int(
+        combined.groupby(["product_key", "variety_key"])["source"].nunique().ge(2).sum()
+    )
 
     sisap_gold = json.loads(SISAP_GOLD.read_text(encoding="utf-8"))
-    latest_records = [{**row, "source": "SISAP", "product_key": norm(row["product"]),
-                       "variety_key": variety_key(row.get("variety"))} for row in sisap_gold.get("records", [])]
+    latest_records = []
+    for row in sisap_gold.get("records", []):
+        product_key = norm(row["product"])
+        vkey, vlabel, applied = canonical_variety(product_key, row.get("variety"), sisap_labels)
+        latest_records.append({**row, "source": "SISAP", "product_key": product_key,
+                               "variety_raw": row.get("variety", ""), "variety_key": vkey,
+                               "variety": vlabel, "variety_alias_applied": applied})
     emmsa_latest = emmsa[emmsa["date"] == emmsa["date"].max()]
     latest_records.extend({
         "source": "EMMSA", "product_key": row.product_key, "product": product_label(row.product_key),
-        "variety_key": variety_key(row.variety), "variety": row.variety,
+        "variety_key": row.variety_key, "variety": row.variety,
+        "variety_raw": row.variety_raw, "variety_alias_applied": bool(row.variety_alias_applied),
         "date": row.date.strftime("%d/%m/%Y"), "market": row.market,
         "origin_country": "", "origin_department": "", "origin_province": "No informado por EMMSA",
         "origin_quality": "not_provided_by_source",
@@ -178,9 +260,16 @@ def main() -> int:
         "layer": "silver_catalog", "generated_at": now.isoformat(timespec="minutes"),
         "selected_products": [{"product_key": key, "product": product_label(key)} for key in sorted(selected)],
         "source_crosswalk": {"EMMSA": EMMSA_PRODUCTS},
+        "variety_crosswalk": [
+            {"product_key": product, "source_variety_key": source, "canonical_variety_key": target,
+             "canonical_label": VARIETY_LABELS.get((product, target), sisap_labels.get((product, target), target.title()))}
+            for (product, source), target in sorted(VARIETY_ALIASES.items())
+        ],
         "quality": {"input_items": len(catalog), "matched_items": sum(bool(x["sisap_product_key"]) for x in catalog),
                     "selected_products": len(selected), "emmsa_latest_date": emmsa["date"].max().strftime("%Y-%m-%d"),
-                    "sisap_latest_date": sisap["date"].max().strftime("%Y-%m-%d")},
+                    "sisap_latest_date": sisap["date"].max().strftime("%Y-%m-%d"),
+                    "variety_alias_rules": len(VARIETY_ALIASES), "historical_rows_normalized_by_alias": alias_rows,
+                    "cross_source_varieties": cross_source_varieties},
         "lineage": str(BRONZE.relative_to(HERE)),
     }
     SILVER.write_text(json.dumps(silver, ensure_ascii=False, indent=2), encoding="utf-8")

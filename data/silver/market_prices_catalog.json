@@ -1,6 +1,6 @@
 {
   "layer": "silver_catalog",
-  "generated_at": "2026-10-31T09:25-05:00",
+  "generated_at": "2026-10-31T09:36-05:00",
   "selected_products": [
     {
       "product_key": "aji fresco",
@@ -248,12 +248,221 @@
       "zapallo": "zapallo"
     }
   },
+  "variety_crosswalk": [
+    {
+      "product_key": "aji fresco",
+      "source_variety_key": "aji escabeche fresco zanahor liso",
+      "canonical_variety_key": "aji escabeche",
+      "canonical_label": "Aji Escabeche"
+    },
+    {
+      "product_key": "aji fresco",
+      "source_variety_key": "aji montana chan costa selva",
+      "canonical_variety_key": "aji montana",
+      "canonical_label": "Aji Montaña"
+    },
+    {
+      "product_key": "aji seco",
+      "source_variety_key": "aji mirasol seco",
+      "canonical_variety_key": "aji mirasol",
+      "canonical_label": "Aji Mirasol"
+    },
+    {
+      "product_key": "aji seco",
+      "source_variety_key": "aji seco panca",
+      "canonical_variety_key": "aji panca",
+      "canonical_label": "Aji Panca"
+    },
+    {
+      "product_key": "arveja grano verde",
+      "source_variety_key": "arveja verde blanca criolla",
+      "canonical_variety_key": "arveja verde blanca serrana",
+      "canonical_label": "Arveja Verde Blanca Serrana"
+    },
+    {
+      "product_key": "cebolla",
+      "source_variety_key": "cebolla cabeza blanca nacional",
+      "canonical_variety_key": "cebolla cabeza blanca",
+      "canonical_label": "Cebolla Cabeza Blanca"
+    },
+    {
+      "product_key": "hortalizas chinas",
+      "source_variety_key": "jolantau organica",
+      "canonical_variety_key": "holantau organica",
+      "canonical_label": "Holantau / Organica"
+    },
+    {
+      "product_key": "mango",
+      "source_variety_key": "mango chato huaca",
+      "canonical_variety_key": "mango chato",
+      "canonical_label": "Mango Chato"
+    },
+    {
+      "product_key": "mango",
+      "source_variety_key": "mango edward huaca",
+      "canonical_variety_key": "mango edward",
+      "canonical_label": "Mango Edward"
+    },
+    {
+      "product_key": "mango",
+      "source_variety_key": "mango edward planta",
+      "canonical_variety_key": "mango edward",
+      "canonical_label": "Mango Edward"
+    },
+    {
+      "product_key": "mango",
+      "source_variety_key": "mango haden",
+      "canonical_variety_key": "mango haden hayde",
+      "canonical_label": "Mango Haden / Hayde"
+    },
+    {
+      "product_key": "mango",
+      "source_variety_key": "mango haden huaca",
+      "canonical_variety_key": "mango haden hayde",
+      "canonical_label": "Mango Haden / Hayde"
+    },
+    {
+      "product_key": "mango",
+      "source_variety_key": "mango kent costa",
+      "canonical_variety_key": "mango kent",
+      "canonical_label": "Mango Kent"
+    },
+    {
+      "product_key": "manzana",
+      "source_variety_key": "manzana delicia costa sierra",
+      "canonical_variety_key": "manzana delicia",
+      "canonical_label": "Manzana Delicia"
+    },
+    {
+      "product_key": "manzana",
+      "source_variety_key": "manzana delicia selva",
+      "canonical_variety_key": "manzana delicia",
+      "canonical_label": "Manzana Delicia"
+    },
+    {
+      "product_key": "naranja",
+      "source_variety_key": "naranja valencia selva",
+      "canonical_variety_key": "naranja valencia",
+      "canonical_label": "Naranja Valencia"
+    },
+    {
+      "product_key": "otros fruticolas",
+      "source_variety_key": "arandanos",
+      "canonical_variety_key": "arandano",
+      "canonical_label": "Arándano"
+    },
+    {
+      "product_key": "palta",
+      "source_variety_key": "palta fuerte costa",
+      "canonical_variety_key": "palta fuerte",
+      "canonical_label": "Palta Fuerte"
+    },
+    {
+      "product_key": "palta",
+      "source_variety_key": "palta fuerte selva",
+      "canonical_variety_key": "palta fuerte",
+      "canonical_label": "Palta Fuerte"
+    },
+    {
+      "product_key": "palta",
+      "source_variety_key": "palta hall costa",
+      "canonical_variety_key": "palta hall",
+      "canonical_label": "Palta Hall"
+    },
+    {
+      "product_key": "palta",
+      "source_variety_key": "palta hall selva",
+      "canonical_variety_key": "palta hall",
+      "canonical_label": "Palta Hall"
+    },
+    {
+      "product_key": "palta",
+      "source_variety_key": "palta villacampa",
+      "canonical_variety_key": "palta villa campa",
+      "canonical_label": "Palta Villa Campa"
+    },
+    {
+      "product_key": "papa",
+      "source_variety_key": "papa amarilis",
+      "canonical_variety_key": "papa amarilla",
+      "canonical_label": "Papa amarilla"
+    },
+    {
+      "product_key": "papa",
+      "source_variety_key": "papa blanca valle otros",
+      "canonical_variety_key": "papa blanca",
+      "canonical_label": "Papa Blanca"
+    },
+    {
+      "product_key": "papa",
+      "source_variety_key": "papa color valle otros",
+      "canonical_variety_key": "papa color",
+      "canonical_label": "Papa Color"
+    },
+    {
+      "product_key": "papa",
+      "source_variety_key": "papa huayro rojo moro negro runt marh u",
+      "canonical_variety_key": "papa huayro",
+      "canonical_label": "Papa Huayro"
+    },
+    {
+      "product_key": "papa",
+      "source_variety_key": "papa peruanita injerto",
+      "canonical_variety_key": "papa peruanita",
+      "canonical_label": "Papa Peruanita"
+    },
+    {
+      "product_key": "pina",
+      "source_variety_key": "pina hawayana",
+      "canonical_variety_key": "pina hawaiana",
+      "canonical_label": "Piña hawaiana"
+    },
+    {
+      "product_key": "platano",
+      "source_variety_key": "platanos bellaco",
+      "canonical_variety_key": "platano bellaco",
+      "canonical_label": "Plátano bellaco"
+    },
+    {
+      "product_key": "platano",
+      "source_variety_key": "platanos biscochito",
+      "canonical_variety_key": "platano bizcocho",
+      "canonical_label": "Plátano bizcocho"
+    },
+    {
+      "product_key": "platano",
+      "source_variety_key": "platanos isla",
+      "canonical_variety_key": "platano isla",
+      "canonical_label": "Plátano isla"
+    },
+    {
+      "product_key": "platano",
+      "source_variety_key": "platanos palillo",
+      "canonical_variety_key": "platano palillo",
+      "canonical_label": "Plátano palillo"
+    },
+    {
+      "product_key": "platano",
+      "source_variety_key": "platanos seda",
+      "canonical_variety_key": "platano seda selva",
+      "canonical_label": "Plátano seda"
+    },
+    {
+      "product_key": "uva",
+      "source_variety_key": "uva borgo a negra",
+      "canonical_variety_key": "uva borgona",
+      "canonical_label": "Uva borgoña"
+    }
+  ],
   "quality": {
     "input_items": 199,
     "matched_items": 125,
     "selected_products": 49,
     "emmsa_latest_date": "2026-10-31",
-    "sisap_latest_date": "2026-10-31"
+    "sisap_latest_date": "2026-10-31",
+    "variety_alias_rules": 34,
+    "historical_rows_normalized_by_alias": 96360,
+    "cross_source_varieties": 60
   },
   "lineage": "data\\bronze\\market_prices\\manifest.json"
 }
