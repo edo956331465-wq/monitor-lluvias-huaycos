@@ -106,6 +106,8 @@ def main() -> int:
             "<tr>" +
             f'<td>{html.escape(r["product"])}</td><td>{html.escape(r["variety"])}</td>' +
             f'<td>{html.escape(r.get("date", "—"))}</td><td>{html.escape(r["market"])}</td>' +
+            f'<td>{html.escape(r.get("origin_country", "Perú"))}</td>' +
+            f'<td>{html.escape(r.get("origin_department", ""))}</td>' +
             f'<td>{html.escape(r["origin_province"])}</td>' +
             f'<td class="num">{fmt(r["price_min"])}</td><td class="num"><b>{fmt(r["price_avg"])}</b></td>' +
             f'<td class="num">{fmt(r["price_max"])}</td><td class="num">{fmt(r["volume_t"], 1)}</td></tr>'
@@ -115,6 +117,7 @@ def main() -> int:
     unique_origins = len({r["origin_province"] for r in records if r["origin_province"] != "Procedencia desconocida"})
     unique_markets = len({r["market"] for r in records})
     errors = payload.get("errors", [])
+    quality = payload.get("quality", {})
     warning = (f'<div class="note">Advertencias de la última descarga: {html.escape(" · ".join(errors))}</div>'
                if errors else '<div class="note">Precios referenciales reportados por SISAP; la unidad depende del producto.</div>')
 
@@ -127,11 +130,13 @@ def main() -> int:
 <div class="kpis"><div class="kpi"><span>Productos</span><b>{unique_products}</b></div>
 <div class="kpi"><span>Mercados con datos</span><b>{unique_markets}</b></div>
 <div class="kpi"><span>Procedencias</span><b>{unique_origins}</b></div>
-<div class="kpi"><span>Registros</span><b>{len(records)}</b></div></div>
+<div class="kpi"><span>Registros</span><b>{len(records)}</b></div>
+<div class="kpi"><span>Productos internos vinculados</span><b>{quality.get("matched_input_items", "—")} / {quality.get("input_items", "—")}</b></div></div>
+<div class="card"><h2>Gobierno y calidad de datos</h2><div class="note">Selección gobernada desde la lista interna: <b>{quality.get("sisap_products_requested", unique_products)}</b> productos base SISAP. Procedencias históricas verificadas por ubigeo: <b>{quality.get("origins_official_ubigeo", "—")}</b>; pendientes de resolver: <b>{quality.get("origins_unresolved", "—")}</b>. Se conserva el texto original en la capa Silver y se publica país, departamento, provincia y código normalizados en Gold.</div></div>
 <div class="card"><h2>Productos cerca de puntos monitoreados</h2>{warning}<div style="height:10px"></div>
 <div class="origins">{"".join(origin_cards) or '<p>No se encontraron coincidencias de procedencia.</p>'}</div></div>
 <div class="card"><h2>Detalle de precios mayoristas</h2><div class="tablewrap"><table><thead><tr>
-<th>Producto</th><th>Variedad</th><th>Fecha</th><th>Mercado</th><th>Procedencia</th><th>Mín.</th><th>Prom.</th><th>Máx.</th><th>Volumen t</th>
+<th>Producto</th><th>Variedad</th><th>Fecha</th><th>Mercado</th><th>País</th><th>Departamento</th><th>Provincia</th><th>Mín.</th><th>Prom.</th><th>Máx.</th><th>Volumen t</th>
 </tr></thead><tbody>{"".join(table_rows)}</tbody></table></div></div>
 <footer>Fuente: <a href="http://sistemas.midagri.gob.pe/sisap/portal2/mayorista/">SISAP · MIDAGRI</a>. Procedencia aproximada por provincia; no representa el predio exacto de producción.</footer>
 </div></body></html>"""
