@@ -1,0 +1,259 @@
+{
+  "layer": "silver_catalog",
+  "generated_at": "2026-10-31T09:09-05:00",
+  "selected_products": [
+    {
+      "product_key": "aji fresco",
+      "product": "Ají fresco"
+    },
+    {
+      "product_key": "aji seco",
+      "product": "Ají seco"
+    },
+    {
+      "product_key": "ajo",
+      "product": "Ajo"
+    },
+    {
+      "product_key": "apio",
+      "product": "Apio"
+    },
+    {
+      "product_key": "arveja grano verde",
+      "product": "Arveja grano verde"
+    },
+    {
+      "product_key": "bayas",
+      "product": "Bayas"
+    },
+    {
+      "product_key": "beterraga",
+      "product": "Beterraga"
+    },
+    {
+      "product_key": "camote",
+      "product": "Camote"
+    },
+    {
+      "product_key": "cebolla",
+      "product": "Cebolla"
+    },
+    {
+      "product_key": "chirimoya",
+      "product": "Chirimoya"
+    },
+    {
+      "product_key": "choclo",
+      "product": "Choclo"
+    },
+    {
+      "product_key": "culantro",
+      "product": "Culantro"
+    },
+    {
+      "product_key": "esparrago",
+      "product": "Espárrago"
+    },
+    {
+      "product_key": "espinaca",
+      "product": "Espinaca"
+    },
+    {
+      "product_key": "fresa",
+      "product": "Fresa"
+    },
+    {
+      "product_key": "frijol grano seco",
+      "product": "Frijol grano seco"
+    },
+    {
+      "product_key": "frijol grano verde",
+      "product": "Frijol grano verde"
+    },
+    {
+      "product_key": "granadilla",
+      "product": "Granadilla"
+    },
+    {
+      "product_key": "haba grano verde",
+      "product": "Haba grano verde"
+    },
+    {
+      "product_key": "hortalizas chinas",
+      "product": "Hortalizas chinas"
+    },
+    {
+      "product_key": "lechuga",
+      "product": "Lechuga"
+    },
+    {
+      "product_key": "lenteja grano seco",
+      "product": "Lenteja grano seco"
+    },
+    {
+      "product_key": "limon",
+      "product": "Limón"
+    },
+    {
+      "product_key": "maiz seco",
+      "product": "Maíz seco"
+    },
+    {
+      "product_key": "mandarina",
+      "product": "Mandarina"
+    },
+    {
+      "product_key": "mango",
+      "product": "Mango"
+    },
+    {
+      "product_key": "manzana",
+      "product": "Manzana"
+    },
+    {
+      "product_key": "maracuya",
+      "product": "Maracuya"
+    },
+    {
+      "product_key": "melocoton",
+      "product": "Melocoton"
+    },
+    {
+      "product_key": "melon",
+      "product": "Melon"
+    },
+    {
+      "product_key": "membrillo",
+      "product": "Membrillo"
+    },
+    {
+      "product_key": "naranja",
+      "product": "Naranja"
+    },
+    {
+      "product_key": "olluco",
+      "product": "Olluco"
+    },
+    {
+      "product_key": "otros fruticolas",
+      "product": "Otros fruticolas"
+    },
+    {
+      "product_key": "palta",
+      "product": "Palta"
+    },
+    {
+      "product_key": "papa",
+      "product": "Papa"
+    },
+    {
+      "product_key": "papaya",
+      "product": "Papaya"
+    },
+    {
+      "product_key": "pepino",
+      "product": "Pepino"
+    },
+    {
+      "product_key": "pimiento fresco",
+      "product": "Pimiento fresco"
+    },
+    {
+      "product_key": "pina",
+      "product": "Piña"
+    },
+    {
+      "product_key": "platano",
+      "product": "Platano"
+    },
+    {
+      "product_key": "sandia",
+      "product": "Sandia"
+    },
+    {
+      "product_key": "tomate",
+      "product": "Tomate"
+    },
+    {
+      "product_key": "tuna",
+      "product": "Tuna"
+    },
+    {
+      "product_key": "uva",
+      "product": "Uva"
+    },
+    {
+      "product_key": "vainita",
+      "product": "Vainita"
+    },
+    {
+      "product_key": "yuca",
+      "product": "Yuca"
+    },
+    {
+      "product_key": "zanahoria",
+      "product": "Zanahoria"
+    },
+    {
+      "product_key": "zapallo",
+      "product": "Zapallo"
+    }
+  ],
+  "source_crosswalk": {
+    "EMMSA": {
+      "ajo": "ajo",
+      "apio": "apio",
+      "arveja": "arveja grano verde",
+      "betarraga": "beterraga",
+      "camote": "camote",
+      "cebolla": "cebolla",
+      "chirimoya": "chirimoya",
+      "choclo": "choclo",
+      "culantro": "culantro",
+      "durazno": "melocoton",
+      "melocoton": "melocoton",
+      "esparrago": "esparrago",
+      "espinaca": "espinaca",
+      "fresa": "fresa",
+      "granadilla": "granadilla",
+      "haba": "haba grano verde",
+      "hortalizas chinas": "hortalizas chinas",
+      "lechuga": "lechuga",
+      "lenteja": "lenteja grano seco",
+      "limon": "limon",
+      "maiz": "maiz seco",
+      "mandarina": "mandarina",
+      "mango": "mango",
+      "manzana": "manzana",
+      "maracuya": "maracuya",
+      "melon": "melon",
+      "membrillo": "membrillo",
+      "naranja": "naranja",
+      "olluco": "olluco",
+      "otras frutas": "otros fruticolas",
+      "palta": "palta",
+      "papa": "papa",
+      "papaya": "papaya",
+      "pepino": "pepino",
+      "pimiento": "pimiento fresco",
+      "pina": "pina",
+      "platanos": "platano",
+      "sandia": "sandia",
+      "tomate": "tomate",
+      "tuna": "tuna",
+      "uva": "uva",
+      "vainita": "vainita",
+      "yuca": "yuca",
+      "zanahoria": "zanahoria",
+      "zapallo": "zapallo"
+    }
+  },
+  "quality": {
+    "input_items": 199,
+    "matched_items": 125,
+    "selected_products": 49,
+    "emmsa_latest_date": "2026-10-09",
+    "sisap_latest_date": "2026-10-31"
+  },
+  "lineage": "data\\bronze\\market_prices\\manifest.json"
+}

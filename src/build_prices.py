@@ -1,150 +1,43 @@
-"""Construye la segunda hoja del sitio: precios y procedencias SISAP."""
-
+"""Construye la página interactiva de precios SISAP y EMMSA."""
 from __future__ import annotations
-
-import html
 import json
-import re
-import unicodedata
-from collections import defaultdict
+from common import DATA_DIR, OUT_DIR, banner
 
-from common import CACHE_DIR, DATA_DIR, OUT_DIR, banner, load_points
-
-GOLD_SOURCE = DATA_DIR / "gold" / "sisap_dashboard.json"
-CACHE_SOURCE = CACHE_DIR / "sisap_latest.json"
-
-
-def norm(value: str) -> str:
-    value = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode()
-    return re.sub(r"[^a-z0-9]+", " ", value.lower()).strip()
-
-
-ALIASES = {
-    "tumbes": ("tumbes", "zarumilla", "contralmirante villar"),
-    "piura": ("piura", "sechura", "morropon"),
-    "sullana": ("sullana", "paita", "talara", "ayabaca"),
-    "huancabamba": ("huancabamba",),
-    "chiclayo": ("chiclayo", "lambayeque", "ferrenafe"),
-    "trujillo": ("trujillo", "viru", "asche", "otuzco"),
-    "chimbote": ("santa", "chimbote"),
-    "casma": ("casma", "huarmey"),
-    "barranca": ("barranca", "cajatambo"),
-    "huacho": ("huaura", "huacho", "oyon"),
-    "lima": ("lima", "callao", "huaral"),
-    "chosica": ("huarochiri", "chosica"),
-    "santa-eulalia": ("huarochiri", "santa eulalia"),
-    "canete": ("canete", "mala"),
-    "yauyos": ("yauyos",),
-    "pisco": ("pisco", "chincha"),
-    "ica": ("ica", "palpa", "nazca"),
-    "camana": ("camana", "caraveli"),
-    "mollendo": ("islay", "mollendo", "arequipa"),
-    "ilo": ("ilo", "mariscal nieto", "moquegua"),
-    "tacna": ("tacna", "jorge basadre"),
-}
-
-
+SISAP = DATA_DIR / "gold" / "sisap_dashboard.json"
+COMBINED = DATA_DIR / "gold" / "market_prices_combined.json"
 CSS = """
-:root{--bg:#f5f1e8;--card:#fffdf8;--text:#211d18;--muted:#746a5d;--line:#e7ddca;
---accent:#5a3b22;--yellow:#f4c300}*{box-sizing:border-box}body{margin:0;background:var(--bg);
-color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-.wrap{max-width:1180px;margin:auto;padding:22px 20px 60px}.nav{display:flex;gap:8px;margin-bottom:12px}
-.nav a{padding:8px 14px;border:1px solid #d4b75b;border-radius:999px;text-decoration:none;
-color:#4b351d;background:#fffdf8;font-weight:650}.nav a.active{background:var(--yellow);border-color:var(--yellow)}
-.hero{background:linear-gradient(135deg,#15130f,#2a2118 58%,#654621);color:white;border-radius:14px;
-padding:25px 28px;border-top:5px solid var(--yellow);margin-bottom:16px}.hero h1{margin:0 0 5px;font-size:23px}
-.hero p{margin:0;color:#f4e9ca}.meta{margin-top:12px;color:#ffe889;font-size:12px}.kpis{display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px}.kpi,.card{background:var(--card);
-border:1px solid var(--line);border-radius:12px}.kpi{padding:14px 16px}.kpi b{display:block;font-size:25px}
-.kpi span{font-size:11px;color:var(--muted);text-transform:uppercase}.card{padding:18px 20px;margin-bottom:16px}
-h2{font-size:15px;text-transform:uppercase;color:#3b2a1c;margin:0 0 10px}.origins{display:grid;
-grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}.origin{border:1px solid var(--line);border-radius:10px;
-padding:12px;background:#fff}.origin h3{font-size:13px;margin:0 0 6px}.chips{display:flex;flex-wrap:wrap;gap:5px}
-.chip{background:#fff0a8;border:1px solid #e5c44c;border-radius:999px;padding:2px 8px;font-size:11px}
-.tablewrap{overflow:auto;max-height:700px}table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;
-border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{position:sticky;top:0;background:#faf5e8;
-font-size:10px;text-transform:uppercase}td.num{text-align:right;font-variant-numeric:tabular-nums}tbody tr:hover{background:#fbf6e9}
-.note{padding:10px 12px;background:#faf5e8;border-left:3px solid var(--yellow);color:#51483e;font-size:12px}
-footer{text-align:center;color:var(--muted);font-size:11px;margin-top:22px}@media(max-width:650px){.wrap{padding:12px 10px 40px}.hero{padding:20px}.nav{overflow:auto}}
+:root{--bg:#f5f1e8;--card:#fffdf8;--text:#211d18;--muted:#746a5d;--line:#e7ddca;--yellow:#f4c300;--blue:#1976a3;--orange:#d86a18;--green:#278052;--red:#ad2020}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1240px;margin:auto;padding:22px 20px 60px}.nav{display:flex;gap:8px;overflow:auto;margin-bottom:12px}.nav a{white-space:nowrap;padding:8px 14px;border:1px solid #d4b75b;border-radius:999px;text-decoration:none;color:#4b351d;background:#fffdf8;font-weight:650}.nav a.active{background:var(--yellow)}.hero{background:linear-gradient(135deg,#15130f,#2a2118 58%,#654621);color:white;border-radius:14px;padding:25px 28px;border-top:5px solid var(--yellow);margin-bottom:16px}.hero h1{margin:0 0 5px;font-size:23px}.hero p{margin:0;color:#f4e9ca}.meta{margin-top:12px;color:#ffe889;font-size:12px}.card,.source-card{background:var(--card);border:1px solid var(--line);border-radius:12px}.filters{display:grid;grid-template-columns:1.3fr 1.3fr .8fr 1.3fr 1fr;gap:10px;padding:15px;margin-bottom:15px}.filters label{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700}.filters select{display:block;width:100%;margin-top:4px;padding:9px;border:1px solid #cdbf9f;border-radius:8px;background:white}.source-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:15px}.source-card{padding:16px;border-top:4px solid var(--blue)}.source-card.emmsa{border-color:var(--orange)}.source-card h2{margin:0 0 9px;font-size:15px}.source-card .price{font-size:28px;font-weight:800}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.metric{padding:8px;background:#faf5e8;border-radius:8px}.metric span{display:block;font-size:9px;text-transform:uppercase;color:var(--muted)}.metric b{font-size:14px}.fresh{color:var(--green)}.late{color:var(--red)}.card{padding:18px 20px;margin-bottom:15px}h2{font-size:14px;text-transform:uppercase;margin:0 0 12px}.note{padding:10px 12px;background:#faf5e8;border-left:4px solid var(--yellow);font-size:12px;color:#51483e}.chart{width:100%;height:300px;background:#fff;border:1px solid var(--line);border-radius:10px}.chart text{font-size:10px;fill:#6c6257}.legend{display:flex;gap:16px;margin:8px 0}.legend i{display:inline-block;width:18px;height:4px;margin-right:5px;vertical-align:middle}.tablewrap{overflow:auto;max-height:720px}table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{position:sticky;top:0;background:#faf5e8;font-size:10px;text-transform:uppercase;z-index:1}td.num{text-align:right;font-variant-numeric:tabular-nums}tbody tr:hover{background:#fbf6e9}.count{color:var(--muted);font-size:12px;margin-bottom:8px}@media(max-width:850px){.filters{grid-template-columns:1fr 1fr}.source-grid{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}@media(max-width:520px){.filters{grid-template-columns:1fr}.wrap{padding:12px 10px 40px}}
 """
 
-
-def fmt(value, decimals=2):
-    return "—" if value is None else f"{value:,.{decimals}f}".replace(",", " ")
-
-
 def main() -> int:
-    banner("Construyendo hoja de precios SISAP")
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    source = GOLD_SOURCE if GOLD_SOURCE.exists() else CACHE_SOURCE
-    if source.exists():
-        payload = json.loads(source.read_text(encoding="utf-8"))
-    else:
-        payload = {"date": "—", "fetched_at": "—", "records": [], "errors": ["Sin datos SISAP"]}
-    records = payload.get("records", [])
-    points = {p["id"]: p for p in load_points()}
-
-    nearby: dict[str, set[str]] = defaultdict(set)
-    for record in records:
-        origin = norm(record.get("origin_province", ""))
-        for point_id, aliases in ALIASES.items():
-            if any(norm(alias) in origin or origin in norm(alias) for alias in aliases if origin):
-                nearby[point_id].add(record["product"])
-
-    origin_cards = []
-    for point_id, products in sorted(nearby.items(), key=lambda item: points[item[0]]["lat"], reverse=True):
-        chips = "".join(f'<span class="chip">{html.escape(p)}</span>' for p in sorted(products))
-        point = points[point_id]
-        origin_cards.append(
-            f'<div class="origin"><h3>{html.escape(point["name"])} · {html.escape(point["dept"])}</h3>'
-            f'<div class="chips">{chips}</div></div>'
-        )
-
-    table_rows = []
-    for r in sorted(records, key=lambda x: (x["product"], x["variety"], x["market"], x["origin_province"])):
-        table_rows.append(
-            "<tr>" +
-            f'<td>{html.escape(r["product"])}</td><td>{html.escape(r["variety"])}</td>' +
-            f'<td>{html.escape(r.get("date", "—"))}</td><td>{html.escape(r["market"])}</td>' +
-            f'<td>{html.escape(r.get("origin_country", "Perú"))}</td>' +
-            f'<td>{html.escape(r.get("origin_department", ""))}</td>' +
-            f'<td>{html.escape(r["origin_province"])}</td>' +
-            f'<td class="num">{fmt(r["price_min"])}</td><td class="num"><b>{fmt(r["price_avg"])}</b></td>' +
-            f'<td class="num">{fmt(r["price_max"])}</td><td class="num">{fmt(r["volume_t"], 1)}</td></tr>'
-        )
-
-    unique_products = len({r["product"] for r in records})
-    unique_origins = len({r["origin_province"] for r in records if r["origin_province"] != "Procedencia desconocida"})
-    unique_markets = len({r["market"] for r in records})
-    errors = payload.get("errors", [])
-    quality = payload.get("quality", {})
-    warning = (f'<div class="note">Advertencias de la última descarga: {html.escape(" · ".join(errors))}</div>'
-               if errors else '<div class="note">Precios referenciales reportados por SISAP; la unidad depende del producto.</div>')
-
-    page = f"""<!doctype html><html lang="es"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>Precios y procedencias · SISAP</title>
-<style>{CSS}</style></head><body><div class="wrap">
-<nav class="nav"><a href="index.html">Clima y riesgo</a><a class="active" href="precios.html">Precios SISAP</a><a href="abastecimiento.html">Riesgo de abastecimiento</a><a href="puertos.html">Puertos y mar</a><a href="pescados.html">Pescados y mariscos</a></nav>
-<header class="hero"><h1>Precios y procedencias · SISAP</h1><p>Productos relevantes para la operación, mercados mayoristas de Lima y zonas de origen próximas a la red climática.</p>
-<div class="meta">Fecha SISAP: {html.escape(payload.get("date", "—"))} · Descarga: {html.escape(payload.get("fetched_at", "—"))}</div></header>
-<div class="kpis"><div class="kpi"><span>Productos</span><b>{unique_products}</b></div>
-<div class="kpi"><span>Mercados con datos</span><b>{unique_markets}</b></div>
-<div class="kpi"><span>Procedencias</span><b>{unique_origins}</b></div>
-<div class="kpi"><span>Registros</span><b>{len(records)}</b></div>
-<div class="kpi"><span>Productos internos vinculados</span><b>{quality.get("matched_input_items", "—")} / {quality.get("input_items", "—")}</b></div></div>
-<div class="card"><h2>Gobierno y calidad de datos</h2><div class="note">Selección gobernada desde la lista interna: <b>{quality.get("sisap_products_requested", unique_products)}</b> productos base SISAP. Procedencias históricas verificadas por ubigeo: <b>{quality.get("origins_official_ubigeo", "—")}</b>; pendientes de resolver: <b>{quality.get("origins_unresolved", "—")}</b>. Se conserva el texto original en la capa Silver y se publica país, departamento, provincia y código normalizados en Gold.</div></div>
-<div class="card"><h2>Productos cerca de puntos monitoreados</h2>{warning}<div style="height:10px"></div>
-<div class="origins">{"".join(origin_cards) or '<p>No se encontraron coincidencias de procedencia.</p>'}</div></div>
-<div class="card"><h2>Detalle de precios mayoristas</h2><div class="tablewrap"><table><thead><tr>
-<th>Producto</th><th>Variedad</th><th>Fecha</th><th>Mercado</th><th>País</th><th>Departamento</th><th>Provincia</th><th>Mín.</th><th>Prom.</th><th>Máx.</th><th>Volumen t</th>
-</tr></thead><tbody>{"".join(table_rows)}</tbody></table></div></div>
-<footer>Fuente: <a href="http://sistemas.midagri.gob.pe/sisap/portal2/mayorista/">SISAP · MIDAGRI</a>. Procedencia aproximada por provincia; no representa el predio exacto de producción.</footer>
-</div></body></html>"""
-    target = OUT_DIR / "precios.html"
-    target.write_text(page, encoding="utf-8")
-    print(f"  -> {target} ({len(records)} filas)")
+    banner("Construyendo hoja interactiva de precios SISAP + EMMSA")
+    if not SISAP.exists() or not COMBINED.exists():
+        print("  Faltan contratos Gold SISAP o mercado combinado")
+        return 1
+    sisap = json.loads(SISAP.read_text(encoding="utf-8")); combined = json.loads(COMBINED.read_text(encoding="utf-8"))
+    payload = json.dumps({"sisap": sisap, "combined": combined}, ensure_ascii=False).replace("</", "<\\/")
+    quality = combined.get("quality", {})
+    page = f'''<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Precios SISAP y EMMSA</title><style>{CSS}</style></head><body><div class="wrap">
+<nav class="nav"><a href="index.html">Clima y riesgo</a><a class="active" href="precios.html">Precios SISAP + EMMSA</a><a href="abastecimiento.html">Riesgo de abastecimiento</a><a href="puertos.html">Puertos y mar</a><a href="pescados.html">Pescados y mariscos</a></nav>
+<header class="hero"><h1>Precios mayoristas · SISAP y EMMSA</h1><p>Comparación de fuentes de mercado para los productos incluidos en la lista de compras.</p><div class="meta">SISAP {combined['sources'].get('SISAP','—')} · EMMSA {combined['sources'].get('EMMSA','—')} · {quality.get('selected_products',0)} productos base · {quality.get('matched_items',0)} de {quality.get('input_items',0)} ítems internos vinculados</div></header>
+<div class="filters card"><label>Producto<select id="product"></select></label><label>Variedad<select id="variety"></select></label><label>Fuente<select id="source"><option value="">Todas</option><option>SISAP</option><option>EMMSA</option></select></label><label>Mercado<select id="market"><option value="">Todos</option></select></label><label>Departamento<select id="department"><option value="">Todos</option></select></label></div>
+<div id="sourceCards" class="source-grid"></div>
+<div class="card"><h2>Tendencia de precio promedio · últimas 30 observaciones</h2><div class="legend"><span><i style="background:#1976a3"></i>SISAP</span><span><i style="background:#d86a18"></i>EMMSA</span></div><svg id="trend" class="chart" viewBox="0 0 920 300" role="img" aria-label="Tendencia comparativa de precios"></svg><p id="trendNote" class="count"></p></div>
+<div class="card"><h2>Gobierno y calidad de datos</h2><div class="note">Bronze conserva referencias y huellas SHA-256 de cada fuente; Silver normaliza el catálogo y la correspondencia de productos; Gold calcula indicadores comparables. EMMSA no publica procedencia en este conjunto, por lo que se muestra como <b>no informada por la fuente</b>. Las fechas de corte permanecen visibles y no se rellenan artificialmente.</div></div>
+<div class="card"><h2>Detalle filtrado</h2><div id="rowCount" class="count"></div><div class="tablewrap"><table><thead><tr><th>Fuente</th><th>Producto</th><th>Variedad</th><th>Fecha</th><th>Mercado</th><th>País</th><th>Departamento</th><th>Provincia</th><th>Mín.</th><th>Prom.</th><th>Máx.</th><th>Volumen t</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+<footer class="count">Fuentes: SISAP · MIDAGRI y <a href="https://www.emmsa.com.pe/index.php/precios-diarios/" target="_blank" rel="noopener">EMMSA · precios diarios</a>. Son referencias mayoristas; compara fecha, unidad y variedad antes de decidir.</footer></div>
+<script>const DATA={payload};const $=id=>document.getElementById(id),money=x=>x==null?'—':'S/ '+Number(x).toFixed(2),number=(x,d=1)=>x==null?'—':Number(x).toLocaleString('es-PE',{{maximumFractionDigits:d}}),pct=x=>x==null?'—':(x*100).toFixed(1)+'%',esc=s=>String(s??'').replace(/[&<>"']/g,c=>({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}}[c]));const summaries=DATA.combined.summaries,records=DATA.combined.latest_records,product=$('product'),variety=$('variety'),source=$('source'),market=$('market'),department=$('department');
+function options(select,values,allLabel){{const prior=select.value;select.innerHTML=allLabel?`<option value="">${{allLabel}}</option>`:'';values.forEach(([value,label])=>select.add(new Option(label,value)));if([...select.options].some(o=>o.value===prior))select.value=prior}}
+const products=[...new Map(summaries.map(x=>[x.product_key,x.product])).entries()].sort((a,b)=>a[1].localeCompare(b[1]));options(product,products);options(market,[...new Set(records.map(x=>x.market).filter(Boolean))].sort().map(x=>[x,x]),'Todos');options(department,[...new Set(records.map(x=>x.origin_department).filter(Boolean))].sort().map(x=>[x,x]),'Todos');
+function refreshVarieties(){{const vals=[...new Map(summaries.filter(x=>x.product_key===product.value&&x.variety_key!=='__all__').map(x=>[x.variety_key,x.variety])).entries()].sort((a,b)=>a[1].localeCompare(b[1]));options(variety,vals,'Todas las variedades')}}
+function selectedSummaries(){{const key=variety.value||'__all__';return summaries.filter(x=>x.product_key===product.value&&x.variety_key===key&&(!source.value||x.source===source.value))}}
+function renderCards(){{const items=selectedSummaries();$('sourceCards').innerHTML=items.map(x=>{{const age=Math.max(0,Math.floor((new Date()-new Date(x.latest_date+'T12:00:00'))/86400000)),late=age>3;return`<div class="source-card ${{x.source.toLowerCase()}}"><h2>${{esc(x.source)}} · ${{esc(x.variety)}}</h2><div class="price">${{money(x.current_price)}}</div><div class="${{late?'late':'fresh'}}">Corte ${{x.latest_date}} · ${{age}} día${{age===1?'':'s'}} de antigüedad</div><div class="metrics"><div class="metric"><span>Hace 7 días</span><b>${{money(x.price_7d)}}</b></div><div class="metric"><span>Prom. semanal</span><b>${{money(x.price_week)}}</b></div><div class="metric"><span>Prom. 30 días</span><b>${{money(x.price_month)}}</b></div><div class="metric"><span>Variación 7 días</span><b class="${{x.change_7d>0?'late':x.change_7d<0?'fresh':''}}">${{pct(x.change_7d)}}</b></div></div></div>`}}).join('')||'<div class="note">No existe un indicador para esta combinación.</div>'}}
+function renderChart(){{const items=selectedSummaries().filter(x=>x.series?.some(p=>p.price!=null)),svg=$('trend'),all=items.flatMap(x=>x.series.filter(p=>p.price!=null));if(!all.length){{svg.innerHTML='<text x="30" y="50">Sin serie disponible.</text>';return}}const ts=all.map(x=>new Date(x.date+'T12:00:00').getTime()),prices=all.map(x=>x.price),minT=Math.min(...ts),maxT=Math.max(...ts),minP=Math.min(...prices),maxP=Math.max(...prices),x=t=>55+(t-minT)/(maxT-minT||1)*835,y=p=>250-(p-minP)/(maxP-minP||1)*210;let html=`<line x1="55" y1="250" x2="890" y2="250" stroke="#bdb3a5"/><line x1="55" y1="40" x2="55" y2="250" stroke="#bdb3a5"/><text x="8" y="45">S/ ${{maxP.toFixed(2)}}</text><text x="8" y="250">S/ ${{minP.toFixed(2)}}</text><text x="55" y="275">${{new Date(minT).toLocaleDateString('es-PE')}}</text><text x="805" y="275">${{new Date(maxT).toLocaleDateString('es-PE')}}</text>`;items.forEach(item=>{{const points=item.series.filter(p=>p.price!=null).map(p=>`${{x(new Date(p.date+'T12:00:00').getTime()).toFixed(1)}},${{y(p.price).toFixed(1)}}`).join(' '),color=item.source==='SISAP'?'#1976a3':'#d86a18';html+=`<polyline points="${{points}}" fill="none" stroke="${{color}}" stroke-width="3" stroke-linejoin="round"/>`}});svg.innerHTML=html;$('trendNote').textContent='Cada línea respeta la fecha de corte de su fuente; no se imputan días faltantes.'}}
+function renderRows(){{const filtered=records.filter(x=>x.product_key===product.value&&(!variety.value||x.variety_key===variety.value)&&(!source.value||x.source===source.value)&&(!market.value||x.market===market.value)&&(!department.value||x.origin_department===department.value));$('rowCount').textContent=`${{filtered.length}} registros encontrados${{filtered.length>300?' · se muestran los primeros 300':''}}`;$('rows').innerHTML=filtered.slice(0,300).map(x=>`<tr><td><b>${{esc(x.source)}}</b></td><td>${{esc(x.product)}}</td><td>${{esc(x.variety)}}</td><td>${{esc(x.date)}}</td><td>${{esc(x.market)}}</td><td>${{esc(x.origin_country)}}</td><td>${{esc(x.origin_department)}}</td><td>${{esc(x.origin_province)}}</td><td class="num">${{number(x.price_min,2)}}</td><td class="num"><b>${{number(x.price_avg,2)}}</b></td><td class="num">${{number(x.price_max,2)}}</td><td class="num">${{number(x.volume_t)}}</td></tr>`).join('')}}
+function render(){{renderCards();renderChart();renderRows()}}product.onchange=()=>{{refreshVarieties();render()}};[variety,source,market,department].forEach(x=>x.onchange=render);product.value=products.find(x=>x[0]==='papa')?.[0]||products[0]?.[0]||'';refreshVarieties();render();</script></body></html>'''
+    OUT_DIR.mkdir(parents=True, exist_ok=True); target = OUT_DIR / "precios.html"; target.write_text(page, encoding="utf-8")
+    print(f"  -> {target} ({len(combined.get('latest_records', []))} filas; {len(combined.get('summaries', []))} indicadores)")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())
