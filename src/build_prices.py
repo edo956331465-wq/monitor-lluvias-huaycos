@@ -1,10 +1,33 @@
 """Construye la página interactiva de precios SISAP y EMMSA."""
 from __future__ import annotations
 import json
+import re
+import unicodedata
 from common import DATA_DIR, OUT_DIR, banner
 
 SISAP = DATA_DIR / "gold" / "sisap_dashboard.json"
 COMBINED = DATA_DIR / "gold" / "market_prices_combined.json"
+
+# API compartida con build_dashboard para vincular procedencias agrícolas con
+# los puntos climáticos. Se mantiene aquí por compatibilidad del pipeline.
+def norm(value: str) -> str:
+    value = unicodedata.normalize("NFKD", value or "").encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z0-9]+", " ", value.lower()).strip()
+
+
+ALIASES = {
+    "tumbes": ("tumbes", "zarumilla", "contralmirante villar"),
+    "piura": ("piura", "sechura", "morropon"), "sullana": ("sullana", "paita", "talara", "ayabaca"),
+    "huancabamba": ("huancabamba",), "chiclayo": ("chiclayo", "lambayeque", "ferrenafe"),
+    "trujillo": ("trujillo", "viru", "asche", "otuzco"), "chimbote": ("santa", "chimbote"),
+    "casma": ("casma", "huarmey"), "barranca": ("barranca", "cajatambo"),
+    "huacho": ("huaura", "huacho", "oyon"), "lima": ("lima", "callao", "huaral"),
+    "chosica": ("huarochiri", "chosica"), "santa-eulalia": ("huarochiri", "santa eulalia"),
+    "canete": ("canete", "mala"), "yauyos": ("yauyos",), "pisco": ("pisco", "chincha"),
+    "ica": ("ica", "palpa", "nazca"), "camana": ("camana", "caraveli"),
+    "mollendo": ("islay", "mollendo", "arequipa"), "ilo": ("ilo", "mariscal nieto", "moquegua"),
+    "tacna": ("tacna", "jorge basadre"),
+}
 CSS = """
 :root{--bg:#f5f1e8;--card:#fffdf8;--text:#211d18;--muted:#746a5d;--line:#e7ddca;--yellow:#f4c300;--blue:#1976a3;--orange:#d86a18;--green:#278052;--red:#ad2020}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1240px;margin:auto;padding:22px 20px 60px}.nav{display:flex;gap:8px;overflow:auto;margin-bottom:12px}.nav a{white-space:nowrap;padding:8px 14px;border:1px solid #d4b75b;border-radius:999px;text-decoration:none;color:#4b351d;background:#fffdf8;font-weight:650}.nav a.active{background:var(--yellow)}.hero{background:linear-gradient(135deg,#15130f,#2a2118 58%,#654621);color:white;border-radius:14px;padding:25px 28px;border-top:5px solid var(--yellow);margin-bottom:16px}.hero h1{margin:0 0 5px;font-size:23px}.hero p{margin:0;color:#f4e9ca}.meta{margin-top:12px;color:#ffe889;font-size:12px}.card,.source-card{background:var(--card);border:1px solid var(--line);border-radius:12px}.filters{display:grid;grid-template-columns:1.3fr 1.3fr .8fr 1.3fr 1fr;gap:10px;padding:15px;margin-bottom:15px}.filters label{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700}.filters select{display:block;width:100%;margin-top:4px;padding:9px;border:1px solid #cdbf9f;border-radius:8px;background:white}.source-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:15px}.source-card{padding:16px;border-top:4px solid var(--blue)}.source-card.emmsa{border-color:var(--orange)}.source-card h2{margin:0 0 9px;font-size:15px}.source-card .price{font-size:28px;font-weight:800}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.metric{padding:8px;background:#faf5e8;border-radius:8px}.metric span{display:block;font-size:9px;text-transform:uppercase;color:var(--muted)}.metric b{font-size:14px}.fresh{color:var(--green)}.late{color:var(--red)}.card{padding:18px 20px;margin-bottom:15px}h2{font-size:14px;text-transform:uppercase;margin:0 0 12px}.note{padding:10px 12px;background:#faf5e8;border-left:4px solid var(--yellow);font-size:12px;color:#51483e}.chart{width:100%;height:300px;background:#fff;border:1px solid var(--line);border-radius:10px}.chart text{font-size:10px;fill:#6c6257}.legend{display:flex;gap:16px;margin:8px 0}.legend i{display:inline-block;width:18px;height:4px;margin-right:5px;vertical-align:middle}.tablewrap{overflow:auto;max-height:720px}table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{position:sticky;top:0;background:#faf5e8;font-size:10px;text-transform:uppercase;z-index:1}td.num{text-align:right;font-variant-numeric:tabular-nums}tbody tr:hover{background:#fbf6e9}.count{color:var(--muted);font-size:12px;margin-bottom:8px}@media(max-width:850px){.filters{grid-template-columns:1fr 1fr}.source-grid{grid-template-columns:1fr}.metrics{grid-template-columns:1fr 1fr}}@media(max-width:520px){.filters{grid-template-columns:1fr}.wrap{padding:12px 10px 40px}}
 """
