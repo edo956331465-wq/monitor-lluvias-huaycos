@@ -1,6 +1,6 @@
 {
   "layer": "silver_catalog",
-  "generated_at": "2026-10-31T09:09-05:00",
+  "generated_at": "2026-10-31T09:25-05:00",
   "selected_products": [
     {
       "product_key": "aji fresco",
@@ -252,7 +252,7 @@
     "input_items": 199,
     "matched_items": 125,
     "selected_products": 49,
-    "emmsa_latest_date": "2026-10-09",
+    "emmsa_latest_date": "2026-10-31",
     "sisap_latest_date": "2026-10-31"
   },
   "lineage": "data\\bronze\\market_prices\\manifest.json"

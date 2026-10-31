@@ -1,6 +1,6 @@
 {
   "layer": "bronze_reference",
-  "captured_at": "2026-10-31T09:09-05:00",
+  "captured_at": "2026-10-31T09:25-05:00",
   "sources": [
     {
       "source": "SISAP",
@@ -11,7 +11,7 @@
     {
       "source": "EMMSA",
       "logical_path": "Output\\EMMSA\\Data_Precio_Volumen_EMMSA.csv",
-      "sha256": "ce34ea09ebf6414cfda67a723b8f182adf08b469850e5c29823d1988108034a5",
+      "sha256": "d62978c4f983a567ec4944d2447a688b5398033a93efc2384dac5b22dba9fab5",
       "url": "https://www.emmsa.com.pe/index.php/precios-diarios/"
     }
   ],
