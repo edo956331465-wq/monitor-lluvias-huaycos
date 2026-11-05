@@ -109,6 +109,11 @@ def main() -> int:
             "price_month": round(price_month, 2) if price_month is not None else None,
             "change_7d": round(latest["price"] / previous["price"] - 1, 4) if previous and previous["price"] else None,
             "observations": len(daily),
+            "series": [
+                {"date": row["date"].isoformat(), "price": round(row["price"], 2),
+                 "quantity_kg": round(row["quantity_kg"], 1)}
+                for row in daily[-30:]
+            ],
         })
 
     output = {

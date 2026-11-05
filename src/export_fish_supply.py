@@ -119,6 +119,14 @@ def main() -> int:
         market_rows = [{"market": str(name), "volume_kg": round(float(vol), 1), "share": round(float(vol / market_total), 5) if market_total else 0} for name, vol in markets.head(8).items()]
         price30, price_prev = weighted_price(last30), weighted_price(prev30)
         vol30, vol_prev = float(last30["Volumen_kg"].sum()), float(prev30["Volumen_kg"].sum())
+        price_series = []
+        for day_value, day_rows in all_s.groupby("Fecha"):
+            day_price = weighted_price(day_rows)
+            if day_price is not None:
+                price_series.append({
+                    "date": day_value.date().isoformat(), "price": round(day_price, 2),
+                    "volume_kg": round(float(day_rows["Volumen_kg"].sum()), 1),
+                })
         hhi = sum(row["share"] ** 2 for row in origin_rows)
         products.append({
             "species": str(species), "volume_365_kg": round(float(s["Volumen_kg"].sum()), 1),
@@ -134,6 +142,7 @@ def main() -> int:
             "produce_current_volume_kg": round(float(current_rows["Volumen_kg"].sum()), 1),
             "produce_volume_7d_kg": round(float(previous_rows["Volumen_kg"].sum()), 1) if previous_date is not None else None,
             "produce_volume_month_kg": round(float(month_rows["Volumen_kg"].sum()), 1),
+            "price_series": price_series[-30:],
             "origins_daily": origins_daily, "origins_week": origins_week, "origins_month": origins_month,
             "mapped_share": round(mapped_total / float(s["Volumen_kg"].sum()), 5) if s["Volumen_kg"].sum() else 0,
             "concentration_hhi": round(hhi, 4), "origins": origin_rows, "markets": market_rows,
