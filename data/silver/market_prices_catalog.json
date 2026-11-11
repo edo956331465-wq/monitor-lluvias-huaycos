@@ -1,6 +1,6 @@
 {
   "layer": "silver_catalog",
-  "generated_at": "2026-11-05T09:24-05:00",
+  "generated_at": "2026-11-11T14:53-05:00",
   "selected_products": [
     {
       "product_key": "aji fresco",
@@ -458,10 +458,10 @@
     "input_items": 199,
     "matched_items": 125,
     "selected_products": 49,
-    "emmsa_latest_date": "2026-11-05",
-    "sisap_latest_date": "2026-11-05",
+    "emmsa_latest_date": "2026-11-11",
+    "sisap_latest_date": "2026-11-11",
     "variety_alias_rules": 34,
-    "historical_rows_normalized_by_alias": 96479,
+    "historical_rows_normalized_by_alias": 96617,
     "cross_source_varieties": 60
   },
   "lineage": "data\\bronze\\market_prices\\manifest.json"

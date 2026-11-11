@@ -1,17 +1,17 @@
 {
   "layer": "bronze_reference",
-  "captured_at": "2026-11-05T09:24-05:00",
+  "captured_at": "2026-11-11T14:53-05:00",
   "sources": [
     {
       "source": "SISAP",
       "logical_path": "Arquitectura Medallón\\Output\\silver\\sisap_mercados\\anio=2026\\data.parquet",
-      "sha256": "3b441501cb106cf995314780da27867db5a3c25261b2924eff185b7025ab5bd2",
+      "sha256": "259ad2a3208b5729e383fb14e2c5180a869728c544ddc4da6e29733e477ec29d",
       "url": "http://sistemas.midagri.gob.pe/sisap/portal2/mayorista/"
     },
     {
       "source": "EMMSA",
       "logical_path": "Output\\EMMSA\\Data_Precio_Volumen_EMMSA.csv",
-      "sha256": "623209dc4694be3e5fa7f7b215695bd2ba89f1a5f1cbb71716c37d1b3d60ef3c",
+      "sha256": "18df4588f69b8db1fde0158cf1ba4864faaaf31089ad2c27cb087dfe28708a1d",
       "url": "https://www.emmsa.com.pe/index.php/precios-diarios/"
     }
   ],
